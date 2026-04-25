@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { Wordmark } from "@/components/Wordmark";
+import { Lantern } from "@/components/Lantern";
 
 export default function Home() {
   return (
     <div className="flex flex-col flex-1 px-6 py-10 sm:px-12 sm:py-16">
-      <header className="font-sans text-sm tracking-[0.18em] uppercase text-muted">
-        Lantern Library
+      <header>
+        <Wordmark />
       </header>
 
       <main className="flex flex-1 flex-col justify-center max-w-2xl mx-auto w-full py-24">
@@ -37,7 +39,7 @@ export default function Home() {
             href="/reflect"
             className="group inline-flex items-center gap-3 text-foreground hover:text-flame transition-colors"
           >
-            <span className="h-2 w-2 rounded-full bg-flame shadow-[0_0_12px_2px_rgba(244,162,60,0.6)]" />
+            <Lantern lit />
             <span>Share your story</span>
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
           </Link>
@@ -45,7 +47,7 @@ export default function Home() {
             href="/stories"
             className="group inline-flex items-center gap-3 text-foreground/80 hover:text-foreground transition-colors"
           >
-            <span className="h-2 w-2 rounded-full bg-foreground/30" />
+            <Lantern lit={false} />
             <span>Read stories</span>
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
           </Link>

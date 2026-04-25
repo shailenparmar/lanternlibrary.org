@@ -3,11 +3,15 @@ import { notFound } from "next/navigation";
 import { Wordmark } from "@/components/Wordmark";
 import { Lantern } from "@/components/Lantern";
 import { SampleBadge } from "@/components/SampleBadge";
-import { tileBySlug } from "@/lib/tiles";
-import { relatedStories, stories, storyBySlug } from "@/lib/stories";
+import { stories as inMemoryStories } from "@/lib/stories";
+import {
+  getRelatedStories,
+  getStoryBySlug,
+  tileBySlug,
+} from "@/lib/storage";
 
 export function generateStaticParams() {
-  return stories.map((s) => ({ slug: s.slug }));
+  return inMemoryStories.map((s) => ({ slug: s.slug }));
 }
 
 const formatDate = (iso: string) =>
@@ -23,14 +27,14 @@ export default async function StoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const story = storyBySlug(slug);
+  const story = await getStoryBySlug(slug);
   if (!story) notFound();
 
   const conditionTile = tileBySlug(story.condition);
   const themeTiles = story.themes
     .map((t) => tileBySlug(t))
     .filter((t): t is NonNullable<typeof t> => Boolean(t));
-  const related = relatedStories(slug, 3);
+  const related = await getRelatedStories(slug, 3);
 
   return (
     <div className="flex flex-col flex-1 px-6 py-10 sm:px-12 sm:py-16">

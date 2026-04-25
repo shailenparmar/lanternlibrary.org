@@ -44,7 +44,7 @@ export default function Home() {
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
           </Link>
           <Link
-            href="/stories"
+            href="/read"
             className="group inline-flex items-center gap-3 text-foreground/80 hover:text-foreground transition-colors"
           >
             <Lantern lit={false} />

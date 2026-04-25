@@ -1,11 +1,18 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/Wordmark";
-import { tiles } from "@/lib/tiles";
-import { tileStoryCount, stories } from "@/lib/stories";
+import { getAllTiles, getAllStories, getTileStoryCount } from "@/lib/storage";
 
-export default function StoriesIndex() {
-  const conditions = tiles.filter((t) => t.kind === "condition");
-  const themes = tiles.filter((t) => t.kind === "theme");
+export default async function StoriesIndex() {
+  const [allTiles, stories] = await Promise.all([
+    getAllTiles(),
+    getAllStories(),
+  ]);
+  const conditions = allTiles.filter((t) => t.kind === "condition");
+  const themes = allTiles.filter((t) => t.kind === "theme");
+  const counts = await Promise.all(
+    allTiles.map(async (t) => [t.slug, await getTileStoryCount(t.slug)] as const),
+  );
+  const countMap = new Map(counts);
 
   return (
     <div className="flex flex-col flex-1 px-6 py-10 sm:px-12 sm:py-16">
@@ -35,7 +42,7 @@ export default function StoriesIndex() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {conditions.map((tile) => {
-              const count = tileStoryCount(tile.slug);
+              const count = countMap.get(tile.slug) ?? 0;
               return (
                 <Link
                   key={tile.slug}
@@ -67,7 +74,7 @@ export default function StoriesIndex() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {themes.map((tile) => {
-              const count = tileStoryCount(tile.slug);
+              const count = countMap.get(tile.slug) ?? 0;
               return (
                 <Link
                   key={tile.slug}

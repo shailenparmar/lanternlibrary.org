@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { Wordmark } from "@/components/Wordmark";
 import { Lantern } from "@/components/Lantern";
 import { SampleBadge } from "@/components/SampleBadge";
-import { tileBySlug, tiles } from "@/lib/tiles";
-import { storiesByTile } from "@/lib/stories";
+import { tiles } from "@/lib/tiles";
+import { getStoriesByTile, tileBySlug } from "@/lib/storage";
 
 export function generateStaticParams() {
   return tiles.map((t) => ({ collection: t.slug }));
@@ -19,7 +19,7 @@ export default async function CollectionPage({
   const tile = tileBySlug(collection);
   if (!tile) notFound();
 
-  const stories = storiesByTile(collection);
+  const stories = await getStoriesByTile(collection);
   const isCondition = tile.kind === "condition";
 
   return (

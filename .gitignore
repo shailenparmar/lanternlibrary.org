@@ -32,6 +32,19 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+!server/.env.example
+
+# python (server/)
+server/.venv/
+server/__pycache__/
+server/lantern_reflect/__pycache__/
+server/transcripts/
+*.pyc
+
+# drizzle
+/drizzle/0*.sql
+/drizzle/meta
 
 # vercel
 .vercel

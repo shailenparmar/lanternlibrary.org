@@ -1,65 +1,62 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex flex-col flex-1 px-6 py-10 sm:px-12 sm:py-16">
+      <header className="font-sans text-sm tracking-[0.18em] uppercase text-muted">
+        Lantern Library
+      </header>
+
+      <main className="flex flex-1 flex-col justify-center max-w-2xl mx-auto w-full py-24">
+        <h1 className="font-serif text-5xl sm:text-6xl leading-[1.05] text-foreground">
+          A library of lanterns.
+          <br />
+          <span className="italic text-flame">Each one a story</span> lighting
+          the way for the next.
+        </h1>
+
+        <p className="font-serif text-xl sm:text-2xl leading-snug text-foreground/80 mt-10 max-w-xl">
+          Lantern Library is a nonprofit archive of recovery stories. People
+          who made it through hard chapters — body dysmorphic disorder, OCD,
+          eating disorders, hair loss, chronic pain, and more — sit with a
+          warm reflection tool and leave their wisdom for the next person
+          walking the same path.
+        </p>
+
+        {/* TODO(founder): replace with founder's own voice. The brief calls for
+            landing copy in the founder's voice — this is a holding paragraph. */}
+        <p className="font-serif text-lg leading-relaxed text-foreground/70 mt-8 max-w-xl">
+          If you have recovered, or made meaningful progress, and have thought
+          about sharing your story but never did — this is for you. No camera.
+          No audience. Twenty minutes of reflection, transformed into a
+          structured narrative you approve before anything goes public.
+        </p>
+
+        <nav className="mt-16 flex flex-col sm:flex-row gap-4 sm:gap-8 font-sans text-sm tracking-wide">
+          <Link
+            href="/reflect"
+            className="group inline-flex items-center gap-3 text-foreground hover:text-flame transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <span className="h-2 w-2 rounded-full bg-flame shadow-[0_0_12px_2px_rgba(244,162,60,0.6)]" />
+            <span>Share your story</span>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+          </Link>
+          <Link
+            href="/stories"
+            className="group inline-flex items-center gap-3 text-foreground/80 hover:text-foreground transition-colors"
           >
-            Documentation
-          </a>
-        </div>
+            <span className="h-2 w-2 rounded-full bg-foreground/30" />
+            <span>Read stories</span>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+          </Link>
+        </nav>
       </main>
+
+      <footer className="font-sans text-xs text-muted flex flex-col sm:flex-row gap-2 sm:gap-6 pt-8 border-t border-rule">
+        <span>lanternlibrary.org</span>
+        <span>A nonprofit archive.</span>
+        <span>Not medical advice.</span>
+      </footer>
     </div>
   );
 }

@@ -4,7 +4,10 @@ import { useEffect, useRef, useState } from "react";
 
 type FetchOptions = {
   endpoint: string;
+  /** The string the user is typing — sent to the endpoint after debounce. */
   draft: string;
+  /** JSON key for the value in the request body (default: "draft"). */
+  bodyKey?: string;
   debounceMs?: number;
   minLength?: number;
 };
@@ -14,7 +17,13 @@ export function useLiveTiles<T>(opts: FetchOptions): {
   pending: boolean;
   error: string | null;
 } {
-  const { endpoint, draft, debounceMs = 700, minLength = 12 } = opts;
+  const {
+    endpoint,
+    draft,
+    bodyKey = "draft",
+    debounceMs = 700,
+    minLength = 12,
+  } = opts;
   const [data, setData] = useState<T | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +51,7 @@ export function useLiveTiles<T>(opts: FetchOptions): {
         const res = await fetch(endpoint, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ draft }),
+          body: JSON.stringify({ [bodyKey]: draft }),
           signal: ctrl.signal,
         });
         if (!res.ok) {
@@ -65,7 +74,7 @@ export function useLiveTiles<T>(opts: FetchOptions): {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [draft, endpoint, debounceMs, minLength]);
+  }, [draft, endpoint, bodyKey, debounceMs, minLength]);
 
   return { data, pending, error };
 }

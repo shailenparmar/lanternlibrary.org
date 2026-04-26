@@ -41,15 +41,16 @@ function buildCorpus(): string {
     .join("\n\n");
 }
 
-const READER_SYSTEM = `You are watching a reader type their situation into Lantern Library — a nonprofit archive of recovery stories.
+const SEARCH_SYSTEM = `You are the search interface for Lantern Library — a nonprofit archive of recovery stories. A reader has typed a query. Your job: return story matches + a few follow-up search suggestions that refine the query.
 
-Your job: respond ONLY by calling the surface_reader_tiles tool. Do not turn-take, do not greet them, do not ask questions in your own voice, do not generate any text response. There is no conversation here. Their draft text is in front of you. Read it and call the tool.
+Respond ONLY by calling the surface_search_results tool. No text response.
 
-Two kinds of tiles:
+story_slugs (0–5): pick stories that match the query emotionally and structurally, not just by keyword. Someone in eating-disorder recovery may match more strongly to a chronic-pain story if the identity-reconstruction work is similar. Quality over quantity — three excellent matches beat five mediocre ones. If the query is too short or too unspecific (< ~3 meaningful words), return fewer slugs or an empty list.
 
-1. Phrase tiles (0–4): SHORT phrases drawn directly from THEIR text, in THEIR own language. Echo the most emotionally specific or distinctive lines they wrote — the kind of line a thoughtful reader would underline. 4–12 words each, ideally verbatim or near-verbatim. Do NOT paraphrase. Do NOT summarize. Do NOT therapize. Do NOT write phrases the user did not actually write. If their draft is generic or short, return fewer phrase tiles or none.
-
-2. Story slugs (0–5): pick stories from the collection that resonate emotionally and structurally, not by keyword. Someone in eating-disorder recovery may match more strongly to a chronic-pain story if the identity-reconstruction work is similar. Quality over quantity — three excellent matches beat five mediocre ones. If the draft is too short or too unspecific (< ~10 meaningful words), return fewer slugs or an empty list.
+follow_ups (0–3): SHORT (3–8 words) noun-phrase search suggestions that refine or deepen the query. They appear as clickable chips; clicking one will replace the search bar text. Phrase them like search queries, not questions. Examples:
+- For "BDD": "stories from someone newly diagnosed", "stories about telling family", "what fully-recovered looks like"
+- For "I'm losing my hair": "early years", "after a major life event", "stories about acceptance"
+- For a very specific query: empty array (no follow-ups needed)
 
 Never invent slugs. Use only slugs from the <story slug="..."> tags below.
 
@@ -71,29 +72,29 @@ The recovery-story arc tends to cover: onset, the dark middle, what they tried, 
 
 If the draft is short or unspecific, return fewer tiles. Better silence than empty tiles.`;
 
-const READER_TOOL: Anthropic.Tool = {
-  name: "surface_reader_tiles",
+const SEARCH_TOOL: Anthropic.Tool = {
+  name: "surface_search_results",
   description:
-    "Return phrase tiles (their own language echoed back) and story slugs that resonate. Always call this — never produce a text response.",
+    "Return story matches and follow-up search suggestions for the reader's query. Always call this — never produce a text response.",
   input_schema: {
     type: "object",
     properties: {
-      phrases: {
-        type: "array",
-        items: { type: "string" },
-        description:
-          "0–4 short phrases drawn from the reader's text, near-verbatim, 4–12 words each.",
-        maxItems: 4,
-      },
       story_slugs: {
         type: "array",
         items: { type: "string" },
         description:
-          "0–5 story slugs from the collection that resonate emotionally and structurally.",
+          "0–5 story slugs from the collection that match the query emotionally and structurally.",
         maxItems: 5,
       },
+      follow_ups: {
+        type: "array",
+        items: { type: "string" },
+        description:
+          "0–3 short (3–8 word) refinement suggestions, as noun-phrase search queries.",
+        maxItems: 3,
+      },
     },
-    required: ["phrases", "story_slugs"],
+    required: ["story_slugs", "follow_ups"],
   },
 };
 
@@ -123,9 +124,9 @@ const CONTRIBUTOR_TOOL: Anthropic.Tool = {
   },
 };
 
-export type ReaderTiles = {
-  phrases: string[];
+export type SearchResults = {
   storySlugs: string[];
+  followUps: string[];
 };
 
 export type ContributorTiles = {
@@ -133,40 +134,43 @@ export type ContributorTiles = {
   invitations: string[];
 };
 
-export async function liveReaderTiles(draft: string): Promise<ReaderTiles> {
+export async function searchStories(query: string): Promise<SearchResults> {
   const response = await getClient().messages.create({
     model: "claude-opus-4-7",
     max_tokens: 1024,
     system: [
       {
         type: "text",
-        text: READER_SYSTEM,
+        text: SEARCH_SYSTEM,
         cache_control: { type: "ephemeral" },
       },
     ],
-    tools: [READER_TOOL],
-    tool_choice: { type: "tool", name: "surface_reader_tiles" },
+    tools: [SEARCH_TOOL],
+    tool_choice: { type: "tool", name: "surface_search_results" },
     messages: [
       {
         role: "user",
-        content: `<draft>\n${draft}\n</draft>`,
+        content: `<query>${query}</query>`,
       },
     ],
   });
 
   for (const block of response.content) {
-    if (block.type === "tool_use" && block.name === "surface_reader_tiles") {
+    if (
+      block.type === "tool_use" &&
+      block.name === "surface_search_results"
+    ) {
       const input = block.input as {
-        phrases?: string[];
         story_slugs?: string[];
+        follow_ups?: string[];
       };
       return {
-        phrases: (input.phrases ?? []).slice(0, 4),
         storySlugs: (input.story_slugs ?? []).slice(0, 5),
+        followUps: (input.follow_ups ?? []).slice(0, 3),
       };
     }
   }
-  return { phrases: [], storySlugs: [] };
+  return { storySlugs: [], followUps: [] };
 }
 
 export async function liveContributorTiles(

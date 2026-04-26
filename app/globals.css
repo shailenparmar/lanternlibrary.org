@@ -60,9 +60,29 @@ body {
   animation: tile-in 600ms ease-out both;
 }
 
+@keyframes floating-word {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  20%, 80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.animate-floating-word {
+  animation: floating-word 1400ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-lantern-drift,
-  .animate-tile-in {
+  .animate-tile-in,
+  .animate-floating-word {
     animation: none;
   }
 }

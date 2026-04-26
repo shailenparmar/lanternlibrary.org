@@ -1,0 +1,136 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useLiveTiles } from "./useLiveTiles";
+import { SampleBadge } from "./SampleBadge";
+
+type SearchResults = {
+  storySlugs: string[];
+  followUps: string[];
+};
+
+type StoryCard = {
+  slug: string;
+  title: string;
+  contributor: string;
+  contributorAge: number;
+  conditionLabel: string;
+  dek: string;
+};
+
+export function SearchSurface() {
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { data, pending, error } = useLiveTiles<SearchResults>({
+    endpoint: "/api/search",
+    draft: query,
+    bodyKey: "query",
+    minLength: 3,
+    debounceMs: 600,
+  });
+  const [storyMeta, setStoryMeta] = useState<Record<string, StoryCard>>({});
+
+  useEffect(() => {
+    const slugs = data?.storySlugs ?? [];
+    const missing = slugs.filter((s) => !storyMeta[s]);
+    if (missing.length === 0) return;
+    fetch("/api/read/stories?slugs=" + missing.join(","))
+      .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+      .then((res: { stories: StoryCard[] }) => {
+        setStoryMeta((prev) => {
+          const next = { ...prev };
+          for (const s of res.stories) next[s.slug] = s;
+          return next;
+        });
+      })
+      .catch(() => {});
+  }, [data?.storySlugs, storyMeta]);
+
+  const storyCards = (data?.storySlugs ?? [])
+    .map((slug) => storyMeta[slug])
+    .filter((s): s is StoryCard => Boolean(s));
+
+  return (
+    <div className="space-y-6">
+      <div className="relative">
+        <SearchIcon />
+        <input
+          ref={inputRef}
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="What are you walking through?"
+          autoFocus
+          className="w-full bg-transparent border border-rule rounded-sm pl-11 pr-16 py-3.5 font-serif text-lg leading-relaxed text-foreground/90 placeholder:text-foreground/40 placeholder:italic focus:outline-none focus:border-flame/50 transition-colors"
+        />
+        {pending && (
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 font-sans text-[10px] tracking-[0.2em] uppercase text-flame/70 animate-pulse">
+            searching
+          </span>
+        )}
+        {!pending && query && (
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              inputRef.current?.focus();
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 font-sans text-xs text-muted hover:text-foreground transition-colors"
+            aria-label="Clear"
+          >
+            clear
+          </button>
+        )}
+      </div>
+
+      {error && <p className="font-sans text-xs text-flame/80">{error}</p>}
+
+      {storyCards.length > 0 && (
+        <ul className="space-y-2">
+          {storyCards.map((s) => (
+            <li key={s.slug}>
+              <Link
+                href={`/story/${s.slug}`}
+                className="group block rounded-sm border border-rule px-4 py-3 hover:border-flame/50 hover:bg-flame/[0.03] transition-all animate-tile-in"
+              >
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <h3 className="font-serif text-lg text-foreground group-hover:text-flame transition-colors leading-tight">
+                    {s.title}
+                  </h3>
+                  <SampleBadge />
+                </div>
+                <p className="font-serif text-sm text-foreground/65 mt-1 leading-snug">
+                  {s.dek}
+                </p>
+                <p className="font-sans text-[11px] text-muted mt-1.5">
+                  {s.contributor}, {s.contributorAge} · {s.conditionLabel}
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}

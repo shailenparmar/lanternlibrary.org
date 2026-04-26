@@ -227,7 +227,7 @@ export function ContributorSurface() {
           }
         >
           <span className="h-1.5 w-1.5 rounded-full bg-flame shadow-[0_0_8px_2px_rgba(244,162,60,0.6)]" />
-          Release my lantern
+          I'm ready to see my lantern
         </button>
       </div>
     </div>

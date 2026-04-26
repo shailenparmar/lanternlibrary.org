@@ -37,6 +37,36 @@ export function ContributorSurface() {
     minLength: 20,
   });
 
+  // Auto-focus textarea on any global keystroke so the user never has to click.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const ta = inputRef.current;
+      if (!ta) return;
+      if (document.activeElement === ta) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      // Skip if focus is on another text-entry element (e.g. mic button retains focus briefly).
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+      if (e.key.length === 1) {
+        e.preventDefault();
+        setDraft((d) => d + e.key);
+        ta.focus();
+      } else if (e.key === "Backspace") {
+        e.preventDefault();
+        setDraft((d) => d.slice(0, -1));
+        ta.focus();
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        setDraft((d) => d + "\n");
+        ta.focus();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   // Schedule the fade-out and the post-fade clear on each input.
   useEffect(() => {
     const hasNewInput =
@@ -106,7 +136,7 @@ export function ContributorSurface() {
               } ${pending ? "animate-breathing" : ""}`}
             >
               {phrase ? (
-                <span className="font-serif italic text-base sm:text-lg leading-tight text-foreground/90 text-center">
+                <span className="font-serif text-base sm:text-lg leading-tight text-foreground/90 text-center">
                   &ldquo;{phrase}&rdquo;
                 </span>
               ) : (
@@ -124,7 +154,7 @@ export function ContributorSurface() {
         {invitation && (
           <p
             key={invitation}
-            className="font-serif italic text-xl sm:text-2xl leading-snug text-flame/90 text-center w-full animate-tile-in"
+            className="font-serif text-xl sm:text-2xl leading-snug text-flame/90 text-center w-full animate-tile-in"
           >
             {invitation}
           </p>
@@ -144,29 +174,22 @@ export function ContributorSurface() {
       </div>
 
       {/* Live ephemeral display — type or speak shows here, fades on pause */}
-      <button
-        type="button"
-        onClick={() => inputRef.current?.focus()}
-        className="w-full text-center cursor-text bg-transparent border-none focus:outline-none"
-        aria-label="Focus input"
+      <div
+        className="w-full text-center font-serif text-2xl sm:text-3xl leading-relaxed text-foreground/85 min-h-[3em] px-2 transition-opacity duration-[1600ms] ease-out"
+        style={{
+          opacity: liveText ? (showing ? 1 : 0) : 0.3,
+          maskImage:
+            "linear-gradient(to right, transparent 0%, black 10%, black 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent 0%, black 10%, black 100%)",
+        }}
       >
-        <div
-          className="font-serif italic text-2xl sm:text-3xl leading-relaxed text-foreground/85 min-h-[3em] px-2 transition-opacity duration-[1600ms] ease-out"
-          style={{
-            opacity: liveText ? (showing ? 1 : 0) : 0.25,
-            maskImage:
-              "linear-gradient(to right, transparent 0%, black 10%, black 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent 0%, black 10%, black 100%)",
-          }}
-        >
-          {liveText || (
-            <span className="font-sans not-italic text-xs tracking-[0.2em] uppercase text-muted/40">
-              click here and start
-            </span>
-          )}
-        </div>
-      </button>
+        {liveText || (
+          <span className="font-sans text-xs tracking-[0.2em] uppercase text-muted/40">
+            start typing
+          </span>
+        )}
+      </div>
 
       {/* Bottom controls */}
       <div className="mt-12 flex items-center gap-6">

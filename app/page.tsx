@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Wordmark } from "@/components/Wordmark";
 import { LanternField } from "@/components/LanternField";
 import { Footer } from "@/components/Footer";
-import { ReadChat } from "@/components/ReadChat";
+import { ReaderSurface } from "@/components/ReaderSurface";
 
 export default function Home() {
   return (
@@ -22,13 +22,12 @@ export default function Home() {
         </h1>
 
         <p className="font-serif text-lg sm:text-xl leading-snug text-foreground/75 mt-8 max-w-xl">
-          A nonprofit archive of recovery stories. Tell me what you are
-          walking through, and I will surface a few stories from the
-          collection that may resonate.
+          A nonprofit archive of recovery stories. Type what you are walking
+          through; tiles surface as you go.
         </p>
 
-        <div className="mt-14">
-          <ReadChat />
+        <div className="mt-12">
+          <ReaderSurface />
         </div>
 
         <div className="mt-20 pt-8 border-t border-rule">

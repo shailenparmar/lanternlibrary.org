@@ -31,7 +31,7 @@ export function ContributorSurface() {
       setDraft((d) => (d.endsWith(" ") || d === "" ? d : d + " ") + text),
   });
 
-  const { data, pending, error } = useLiveTiles<ContributorTiles>({
+  const { data, error } = useLiveTiles<ContributorTiles>({
     endpoint: "/api/tiles/reflect",
     draft,
     minLength: 20,
@@ -133,7 +133,7 @@ export function ContributorSurface() {
                 phrase
                   ? "border-flame/30 bg-flame/[0.05] animate-tile-in"
                   : "border-rule/60 bg-transparent"
-              } ${pending ? "animate-breathing" : ""}`}
+              }`}
             >
               {phrase ? (
                 <span className="font-serif text-base sm:text-lg leading-tight text-foreground/90 text-center">
@@ -161,15 +161,11 @@ export function ContributorSurface() {
         )}
       </div>
 
-      {/* Status line */}
+      {/* Status line — only shows errors or voice-on state */}
       <div className="font-sans text-[11px] tracking-[0.18em] uppercase text-muted/70 mt-8 mb-4 min-h-[1em] flex items-center gap-3">
-        {pending && <span className="text-flame/70 animate-pulse">listening</span>}
         {error && <span className="text-flame/80">{error}</span>}
-        {dictation.active && !pending && (
+        {dictation.active && (
           <span className="text-flame/60">voice on</span>
-        )}
-        {!pending && !error && draft.trim().length === 0 && !dictation.active && (
-          <span className="text-muted/60">type or speak — your words pass through</span>
         )}
       </div>
 

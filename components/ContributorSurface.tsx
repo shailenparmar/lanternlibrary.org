@@ -116,43 +116,41 @@ export function ContributorSurface() {
       </div>
 
       {/* Reflecting tiles + prompts column */}
-      <aside className="space-y-8 lg:sticky lg:top-10">
+      <aside className="space-y-10 lg:sticky lg:top-10">
         {phrases.length === 0 && invitations.length === 0 && !pending && (
           <p className="font-sans text-[11px] tracking-[0.18em] uppercase text-muted/40">
-            tiles will surface here as you write
+            a question and a few tiles will surface here
           </p>
         )}
 
+        {/* One question, on top */}
+        {invitations[0] && (
+          <section
+            key={invitations[0]}
+            className="animate-tile-in"
+          >
+            <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-muted/70 mb-3">
+              If you want to go deeper
+            </p>
+            <p className="font-serif italic text-2xl sm:text-3xl leading-snug text-flame/90">
+              {invitations[0]}
+            </p>
+          </section>
+        )}
+
+        {/* Three reflection tiles, beneath */}
         {phrases.length > 0 && (
           <section>
             <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-muted/70 mb-3">
               What I'm hearing
             </p>
-            <ul className="flex flex-wrap gap-2">
+            <ul className="space-y-3">
               {phrases.map((p) => (
                 <li
                   key={p}
-                  className="rounded-sm border border-flame/30 bg-flame/[0.05] px-2.5 py-1.5 font-serif italic text-sm text-foreground/85 animate-tile-in"
+                  className="rounded-sm border border-flame/30 bg-flame/[0.05] px-5 py-4 font-serif italic text-xl sm:text-2xl leading-snug text-foreground/90 animate-tile-in"
                 >
                   &ldquo;{p}&rdquo;
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {invitations.length > 0 && (
-          <section>
-            <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-muted/70 mb-3">
-              If you want to go deeper
-            </p>
-            <ul className="space-y-2">
-              {invitations.map((inv) => (
-                <li
-                  key={inv}
-                  className="font-serif text-base italic text-foreground/70 leading-snug before:content-['—'] before:mr-2 before:text-flame/60 animate-tile-in"
-                >
-                  {inv}
                 </li>
               ))}
             </ul>

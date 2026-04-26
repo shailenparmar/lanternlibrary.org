@@ -62,15 +62,15 @@ const CONTRIBUTOR_SYSTEM = `You are silently watching someone share a recovery s
 
 Respond ONLY by calling the surface_contributor_tiles tool. Do not turn-take, do not greet them, do not ask questions in your own voice, do not generate any text response. Their draft is in front of you. Read it and call the tool.
 
-Two kinds of tiles:
+Return TWO things:
 
-1. Phrase tiles (0–4): SHORT phrases drawn directly from THEIR text, in THEIR own language. Echo the most emotionally specific or distinctive lines they wrote — the lines a future reader would underline. 4–12 words each, ideally verbatim or near-verbatim. Do NOT paraphrase. Do NOT summarize. Do NOT therapize. Do NOT make up phrases they did not write. The brief calls for the texture of "felt completely and hopelessly alone" — that level of specificity, in their words.
+1. ONE invitation (0 or 1): a single, gentle, specific invitation to go deeper into something they have ALREADY brought up. Always tied to specific language they used. NEVER generic ("how did that feel?"). If they mentioned "a surgeon with kind eyes," an invitation might be "What did the kind-eyes surgeon say next?" If they mentioned a hospital, "What time of year was the hospital?" Phrase as a question. If the draft is too short or there is no clear thread to deepen, return an empty invitations array.
 
-2. Invitation tiles (0–3): gentle, specific invitations to go deeper into something they have ALREADY brought up. Always tied to specific language they used. NEVER generic ("how did that feel?"). If they mentioned "a surgeon with kind eyes," an invitation might be "what did the kind-eyes surgeon say next?" If they mentioned a hospital, "what time of year was the hospital?" If they mentioned a person, "what would she say if she knew?"
+2. UP TO THREE phrase tiles (0–3): VERY SHORT phrases drawn directly from THEIR text, in THEIR own language. 2–6 words each, ideally verbatim. Pick the most distinctive, emotionally specific lines — the kind a thoughtful reader would underline. Do NOT paraphrase. Do NOT summarize. Do NOT therapize. Do NOT make up phrases they did not write. Examples of the texture: "the comparison year," "hostage situation," "felt completely alone," "lose forty-five minutes to a mirror." If the draft has fewer than 3 distinctive lines, return fewer.
 
-The recovery-story arc tends to cover: onset, the dark middle, what they tried, the turn, what changed, setbacks, where they are now, and the letter they'd write to their past self. Use these as INTERNAL signals for what's missing — never expose them as a checklist. Never say "now tell me about X." If a section feels thin, an invitation can gently surface it, but only in language tied to what they have already said.
+The recovery-story arc tends to cover: onset, the dark middle, what they tried, the turn, what changed, setbacks, where they are now, and the letter they'd write to their past self. Use these as INTERNAL signals for what is missing — never expose them as a checklist, never say "now tell me about X." If a section feels thin, the invitation can gently surface it, but only in language tied to what they have already said.
 
-If the draft is short or unspecific, return fewer tiles. Better silence than empty tiles.`;
+Better silence than empty tiles.`;
 
 const SEARCH_TOOL: Anthropic.Tool = {
   name: "surface_search_results",
@@ -101,26 +101,26 @@ const SEARCH_TOOL: Anthropic.Tool = {
 const CONTRIBUTOR_TOOL: Anthropic.Tool = {
   name: "surface_contributor_tiles",
   description:
-    "Return phrase tiles (their own language echoed back) and gentle invitations to go deeper. Always call this — never produce a text response.",
+    "Return ONE invitation question and up to three short phrase tiles. Always call this — never produce a text response.",
   input_schema: {
     type: "object",
     properties: {
-      phrases: {
-        type: "array",
-        items: { type: "string" },
-        description:
-          "0–4 short phrases drawn from the contributor's text, near-verbatim, 4–12 words each.",
-        maxItems: 4,
-      },
       invitations: {
         type: "array",
         items: { type: "string" },
         description:
-          "0–3 gentle, specific invitations to go deeper. Always tied to language they actually used.",
+          "0 or 1 gentle, specific invitation question, tied to language they actually used.",
+        maxItems: 1,
+      },
+      phrases: {
+        type: "array",
+        items: { type: "string" },
+        description:
+          "0–3 very short phrases drawn from the contributor's text, near-verbatim, 2–6 words each.",
         maxItems: 3,
       },
     },
-    required: ["phrases", "invitations"],
+    required: ["invitations", "phrases"],
   },
 };
 
@@ -206,8 +206,8 @@ export async function liveContributorTiles(
         invitations?: string[];
       };
       return {
-        phrases: (input.phrases ?? []).slice(0, 4),
-        invitations: (input.invitations ?? []).slice(0, 3),
+        phrases: (input.phrases ?? []).slice(0, 3),
+        invitations: (input.invitations ?? []).slice(0, 1),
       };
     }
   }

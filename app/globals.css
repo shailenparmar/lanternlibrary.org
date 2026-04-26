@@ -29,3 +29,24 @@ body {
   background: var(--flame);
   color: var(--background);
 }
+
+@keyframes lantern-drift {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: var(--lantern-opacity, 0.5);
+  }
+  50% {
+    transform: translateY(-10px) translateX(4px);
+    opacity: 1;
+  }
+}
+
+.animate-lantern-drift {
+  animation: lantern-drift 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-lantern-drift {
+    animation: none;
+  }
+}

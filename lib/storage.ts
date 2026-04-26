@@ -29,30 +29,52 @@ const rowToStory = (row: typeof schema.storiesTable.$inferSelect): Story => ({
   isSample: row.isSample as true,
 });
 
+let dbDisabled = false;
+
+async function tryDb<T>(fn: () => Promise<T>): Promise<T | null> {
+  if (!dbAvailable() || dbDisabled) return null;
+  try {
+    return await fn();
+  } catch (err) {
+    console.warn(
+      "[storage] DB query failed; falling back to in-memory data for the rest of this process. Reason:",
+      err instanceof Error ? err.message : err,
+    );
+    dbDisabled = true;
+    return null;
+  }
+}
+
 export async function getAllStories(): Promise<Story[]> {
-  if (!dbAvailable()) return inMemoryStories;
-  const rows = await getDb().select().from(schema.storiesTable);
-  return rows.map(rowToStory);
+  const fromDb = await tryDb(async () =>
+    (await getDb().select().from(schema.storiesTable)).map(rowToStory),
+  );
+  return fromDb ?? inMemoryStories;
 }
 
 export async function getStoryBySlug(slug: string): Promise<Story | null> {
-  if (!dbAvailable()) return inMemoryStoryBySlug(slug) ?? null;
-  const rows = await getDb()
-    .select()
-    .from(schema.storiesTable)
-    .where(eq(schema.storiesTable.slug, slug))
-    .limit(1);
-  return rows[0] ? rowToStory(rows[0]) : null;
+  const fromDb = await tryDb(async () => {
+    const rows = await getDb()
+      .select()
+      .from(schema.storiesTable)
+      .where(eq(schema.storiesTable.slug, slug))
+      .limit(1);
+    return rows[0] ? rowToStory(rows[0]) : null;
+  });
+  if (fromDb !== null) return fromDb;
+  return inMemoryStoryBySlug(slug) ?? null;
 }
 
 export async function getStoriesByTile(tileSlug: string): Promise<Story[]> {
-  if (!dbAvailable()) return inMemoryStoriesByTile(tileSlug);
-  const rows = await getDb().select().from(schema.storiesTable);
-  return rows
-    .map(rowToStory)
-    .filter(
-      (s) => s.condition === tileSlug || s.themes.includes(tileSlug),
-    );
+  const fromDb = await tryDb(async () => {
+    const rows = await getDb().select().from(schema.storiesTable);
+    return rows
+      .map(rowToStory)
+      .filter(
+        (s) => s.condition === tileSlug || s.themes.includes(tileSlug),
+      );
+  });
+  return fromDb ?? inMemoryStoriesByTile(tileSlug);
 }
 
 export async function getTileStoryCount(tileSlug: string): Promise<number> {
@@ -63,7 +85,7 @@ export async function getRelatedStories(
   slug: string,
   count = 3,
 ): Promise<Story[]> {
-  if (!dbAvailable()) return inMemoryRelatedStories(slug, count);
+  if (!dbAvailable() || dbDisabled) return inMemoryRelatedStories(slug, count);
   const all = await getAllStories();
   const story = all.find((s) => s.slug === slug);
   if (!story) return [];
@@ -83,14 +105,15 @@ export async function getRelatedStories(
 }
 
 export async function getAllTiles(): Promise<Tile[]> {
-  if (!dbAvailable()) return inMemoryTiles;
-  const rows = await getDb().select().from(schema.tilesTable);
-  return rows.map((r) => ({
-    slug: r.slug,
-    label: r.label,
-    kind: r.kind as "condition" | "theme",
-    description: r.description ?? undefined,
-  }));
+  const fromDb = await tryDb(async () =>
+    (await getDb().select().from(schema.tilesTable)).map((r) => ({
+      slug: r.slug,
+      label: r.label,
+      kind: r.kind as "condition" | "theme",
+      description: r.description ?? undefined,
+    })),
+  );
+  return fromDb ?? inMemoryTiles;
 }
 
 export { tileBySlug };

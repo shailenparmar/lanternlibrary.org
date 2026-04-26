@@ -41,10 +41,10 @@ export default async function StoryPage({
       <header className="flex items-center justify-between">
         <Wordmark />
         <Link
-          href={conditionTile ? `/stories/${conditionTile.slug}` : "/stories"}
+          href="/"
           className="font-sans text-sm tracking-wide text-muted hover:text-foreground transition-colors"
         >
-          ← {conditionTile?.label ?? "stories"}
+          ← back
         </Link>
       </header>
 
@@ -137,22 +137,18 @@ export default async function StoryPage({
         </section>
 
         <section className="mt-10">
-          <p className="font-sans text-xs tracking-[0.2em] uppercase text-muted mb-3">
-            Tags
-          </p>
           <div className="flex flex-wrap gap-2">
             {[conditionTile, ...themeTiles].filter(Boolean).map((t) => (
-              <Link
+              <span
                 key={t!.slug}
-                href={`/stories/${t!.slug}`}
-                className={`font-sans text-xs px-2.5 py-1 rounded-sm border transition-colors ${
+                className={`font-sans text-xs px-2.5 py-1 rounded-sm border ${
                   t!.kind === "condition"
-                    ? "border-rule text-foreground/80 hover:border-flame/50 hover:text-flame"
-                    : "border-transparent bg-rule/40 text-foreground/70 italic hover:bg-flame/10 hover:text-flame"
+                    ? "border-rule text-foreground/70"
+                    : "border-transparent bg-rule/40 text-foreground/65 italic"
                 }`}
               >
                 {t!.label}
-              </Link>
+              </span>
             ))}
           </div>
         </section>

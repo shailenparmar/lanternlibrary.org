@@ -10,7 +10,7 @@ type ContributorTiles = {
 };
 
 const RELEASE_THRESHOLD = 600;
-const VISIBLE_TAIL_CHARS = 110;
+const VISIBLE_TAIL_CHARS = 400;
 const FADE_AFTER_MS = 2200;
 const FADE_DURATION_MS = 1600;
 
@@ -95,7 +95,9 @@ export function ContributorSurface() {
   const invitation = data?.invitations?.[0] ?? null;
   const enoughToRelease = draft.trim().length >= RELEASE_THRESHOLD;
 
-  // What's visible right now: only the tail of the CURRENT bubble + interim.
+  // What's visible right now: the tail of the CURRENT bubble + interim. The
+  // CSS-side scroll container clips at the top and a gradient mask fades the
+  // overflowing lines, so newer text shifts up naturally as you go.
   const liveText = (() => {
     const sessionPart = draft.slice(sessionStart);
     const interimPart = dictation.interim
@@ -104,8 +106,10 @@ export function ContributorSurface() {
       : "";
     const combined = (sessionPart + interimPart).trimStart();
     if (combined.length === 0) return "";
+    // Cap to a reasonable tail to bound DOM size, but no ellipsis — the mask
+    // is doing the visual fade.
     if (combined.length > VISIBLE_TAIL_CHARS) {
-      return "…" + combined.slice(-VISIBLE_TAIL_CHARS);
+      return combined.slice(-VISIBLE_TAIL_CHARS);
     }
     return combined;
   })();
@@ -169,18 +173,25 @@ export function ContributorSurface() {
         )}
       </div>
 
-      {/* Live ephemeral display — type or speak shows here, fades on pause */}
+      {/* Live ephemeral display — type or speak shows here, lines shift up
+          and fade off the top, fades to transparent on pause */}
       <div
-        className="w-full text-center font-serif text-2xl sm:text-3xl leading-relaxed text-foreground/85 min-h-[3em] px-2 transition-opacity duration-[1600ms] ease-out"
+        className="w-full text-center font-serif text-2xl sm:text-3xl text-foreground/85 px-2 overflow-hidden flex flex-col justify-end transition-opacity duration-[1600ms] ease-out"
         style={{
           opacity: liveText ? (showing ? 1 : 0) : 0.3,
+          lineHeight: 1.5,
+          height: "4.5em", // exactly 3 lines (line-height 1.5 × 3)
           maskImage:
-            "linear-gradient(to right, transparent 0%, black 10%, black 100%)",
+            "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.15) 25%, black 65%, black 100%)",
           WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, black 10%, black 100%)",
+            "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.15) 25%, black 65%, black 100%)",
         }}
       >
-        {liveText || (
+        {liveText ? (
+          <span className="block whitespace-pre-wrap break-words">
+            {liveText}
+          </span>
+        ) : (
           <span className="font-sans text-xs tracking-[0.2em] uppercase text-muted/40">
             start typing
           </span>

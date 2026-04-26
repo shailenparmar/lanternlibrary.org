@@ -66,7 +66,7 @@ Return TWO things:
 
 1. ONE invitation (0 or 1): a single, gentle, specific invitation to go deeper into something they have ALREADY brought up. Always tied to specific language they used. NEVER generic ("how did that feel?"). If they mentioned "a surgeon with kind eyes," an invitation might be "What did the kind-eyes surgeon say next?" If they mentioned a hospital, "What time of year was the hospital?" Phrase as a question. If the draft is too short or there is no clear thread to deepen, return an empty invitations array.
 
-2. UP TO THREE phrase tiles (0–3): VERY SHORT phrases drawn directly from THEIR text, in THEIR own language. 2–6 words each, ideally verbatim. Pick the most distinctive, emotionally specific lines — the kind a thoughtful reader would underline. Do NOT paraphrase. Do NOT summarize. Do NOT therapize. Do NOT make up phrases they did not write. Examples of the texture: "the comparison year," "hostage situation," "felt completely alone," "lose forty-five minutes to a mirror." If the draft has fewer than 3 distinctive lines, return fewer.
+2. UP TO FOUR phrase tiles (0–4): VERY SHORT phrases drawn directly from THEIR text, in THEIR own language. 2–6 words each, ideally verbatim. Pick the most distinctive, emotionally specific lines — the kind a thoughtful reader would underline. Do NOT paraphrase. Do NOT summarize. Do NOT therapize. Do NOT make up phrases they did not write. Examples of the texture: "the comparison year," "hostage situation," "felt completely alone," "forty-five minutes to a mirror." Return four when there is enough material; fewer when there is not.
 
 The recovery-story arc tends to cover: onset, the dark middle, what they tried, the turn, what changed, setbacks, where they are now, and the letter they'd write to their past self. Use these as INTERNAL signals for what is missing — never expose them as a checklist, never say "now tell me about X." If a section feels thin, the invitation can gently surface it, but only in language tied to what they have already said.
 
@@ -116,8 +116,8 @@ const CONTRIBUTOR_TOOL: Anthropic.Tool = {
         type: "array",
         items: { type: "string" },
         description:
-          "0–3 very short phrases drawn from the contributor's text, near-verbatim, 2–6 words each.",
-        maxItems: 3,
+          "0–4 very short phrases drawn from the contributor's text, near-verbatim, 2–6 words each.",
+        maxItems: 4,
       },
     },
     required: ["invitations", "phrases"],
@@ -206,7 +206,7 @@ export async function liveContributorTiles(
         invitations?: string[];
       };
       return {
-        phrases: (input.phrases ?? []).slice(0, 3),
+        phrases: (input.phrases ?? []).slice(0, 4),
         invitations: (input.invitations ?? []).slice(0, 1),
       };
     }

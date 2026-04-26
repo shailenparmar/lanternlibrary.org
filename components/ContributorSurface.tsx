@@ -12,11 +12,19 @@ type ContributorTiles = {
 const RELEASE_THRESHOLD = 600;
 const VISIBLE_TAIL_CHARS = 110;
 const FADE_AFTER_MS = 2200;
+const FADE_DURATION_MS = 1600;
 
 export function ContributorSurface() {
   const [draft, setDraft] = useState("");
-  const [showing, setShowing] = useState(true);
+  // sessionStart marks the position in `draft` where the CURRENT visible
+  // bubble began. When the bubble fades out completely, sessionStart is
+  // bumped to draft.length so the next input starts a fresh bubble — old
+  // text never returns.
+  const [sessionStart, setSessionStart] = useState(0);
+  const [showing, setShowing] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dictation = useDictation({
     onFinal: (text) =>
@@ -29,23 +37,42 @@ export function ContributorSurface() {
     minLength: 20,
   });
 
-  // Auto-fade the live display after a pause in input.
+  // Schedule the fade-out and the post-fade clear on each input.
   useEffect(() => {
+    const hasNewInput =
+      draft.length > sessionStart || dictation.interim.length > 0;
+    if (!hasNewInput) return;
+
     setShowing(true);
-    const t = setTimeout(() => setShowing(false), FADE_AFTER_MS);
-    return () => clearTimeout(t);
-  }, [draft, dictation.interim]);
+    if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+    if (clearTimerRef.current) clearTimeout(clearTimerRef.current);
+
+    fadeTimerRef.current = setTimeout(() => {
+      setShowing(false);
+      clearTimerRef.current = setTimeout(() => {
+        // Snapshot current draft length: next input starts a fresh bubble.
+        setSessionStart(draft.length);
+      }, FADE_DURATION_MS);
+    }, FADE_AFTER_MS);
+
+    return () => {
+      // We intentionally do NOT clear the fade timer on rerender — we want
+      // it to keep running across input updates so the most recent timer wins.
+    };
+  }, [draft, dictation.interim, sessionStart]);
 
   const phrases = data?.phrases ?? [];
   const invitation = data?.invitations?.[0] ?? null;
   const enoughToRelease = draft.trim().length >= RELEASE_THRESHOLD;
 
-  // What's visible right now: tail of accumulated draft + any interim voice words.
+  // What's visible right now: only the tail of the CURRENT bubble + interim.
   const liveText = (() => {
-    const combined = (
-      draft +
-      (dictation.interim ? (draft.endsWith(" ") || draft === "" ? "" : " ") + dictation.interim : "")
-    ).trimStart();
+    const sessionPart = draft.slice(sessionStart);
+    const interimPart = dictation.interim
+      ? (sessionPart.endsWith(" ") || sessionPart === "" ? "" : " ") +
+        dictation.interim
+      : "";
+    const combined = (sessionPart + interimPart).trimStart();
     if (combined.length === 0) return "";
     if (combined.length > VISIBLE_TAIL_CHARS) {
       return "…" + combined.slice(-VISIBLE_TAIL_CHARS);
@@ -65,29 +92,44 @@ export function ContributorSurface() {
         className="sr-only"
       />
 
-      {/* Centered question */}
-      <div className="min-h-[5rem] flex items-end w-full">
+      {/* Four reflector squares — at the top, fade in/out as you type */}
+      <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
+        {[0, 1, 2, 3].map((i) => {
+          const phrase = phrases[i];
+          return (
+            <li
+              key={phrase ?? `empty-${i}`}
+              className={`aspect-square rounded-sm border flex items-center justify-center p-3 transition-all duration-700 ease-out ${
+                phrase
+                  ? "border-flame/30 bg-flame/[0.05] animate-tile-in"
+                  : "border-rule/60 bg-transparent"
+              } ${pending ? "animate-breathing" : ""}`}
+            >
+              {phrase ? (
+                <span className="font-serif italic text-base sm:text-lg leading-tight text-foreground/90 text-center">
+                  &ldquo;{phrase}&rdquo;
+                </span>
+              ) : (
+                <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-muted/30">
+                  ·
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Prompt question — beneath the squares */}
+      <div className="mt-10 min-h-[3.5rem] flex items-start w-full">
         {invitation && (
           <p
             key={invitation}
-            className="font-serif italic text-2xl sm:text-3xl leading-snug text-flame/90 text-center w-full animate-tile-in"
+            className="font-serif italic text-xl sm:text-2xl leading-snug text-flame/90 text-center w-full animate-tile-in"
           >
             {invitation}
           </p>
         )}
       </div>
-
-      {/* Centered reflection tiles */}
-      <ul className="mt-8 space-y-3 w-full max-w-xl min-h-[8rem]">
-        {phrases.map((p) => (
-          <li
-            key={p}
-            className="rounded-sm border border-flame/30 bg-flame/[0.05] px-5 py-4 font-serif italic text-xl sm:text-2xl leading-snug text-foreground/90 text-center animate-tile-in"
-          >
-            &ldquo;{p}&rdquo;
-          </li>
-        ))}
-      </ul>
 
       {/* Status line */}
       <div className="font-sans text-[11px] tracking-[0.18em] uppercase text-muted/70 mt-8 mb-4 min-h-[1em] flex items-center gap-3">

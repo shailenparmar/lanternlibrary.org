@@ -79,10 +79,20 @@ body {
   animation: floating-word 1400ms ease-out both;
 }
 
+@keyframes breathing {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.animate-breathing {
+  animation: breathing 2200ms ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-lantern-drift,
   .animate-tile-in,
-  .animate-floating-word {
+  .animate-floating-word,
+  .animate-breathing {
     animation: none;
   }
 }

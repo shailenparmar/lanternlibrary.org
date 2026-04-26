@@ -192,14 +192,21 @@ export function ContributorSurface() {
             {liveText}
           </span>
         ) : (
-          <span className="font-sans text-xs tracking-[0.2em] uppercase text-muted/40">
+          <span className="font-sans text-sm tracking-[0.2em] uppercase text-foreground/55">
             start typing
           </span>
         )}
       </div>
 
+      {/* Keep-going hint — only when draft is partway there */}
+      <div className="mt-12 min-h-[1.25rem] font-sans text-[11px] tracking-[0.2em] uppercase text-flame/70">
+        {draft.trim().length > 0 && !enoughToRelease && (
+          <span>keep going</span>
+        )}
+      </div>
+
       {/* Bottom controls */}
-      <div className="mt-12 flex items-center gap-6">
+      <div className="mt-3 flex items-center gap-6">
         <button
           type="button"
           onClick={dictation.toggle}

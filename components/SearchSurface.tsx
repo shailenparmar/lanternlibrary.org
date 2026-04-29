@@ -20,16 +20,21 @@ type StoryCard = {
 };
 
 const SAMPLE_QUERIES = [
-  "What are you walking through?",
   "I'm losing my hair",
   "I think I have OCD",
+  "Hair loss in my twenties",
+  "Struggling with anorexia",
+  "Body dysmorphia",
   "Chronic pain that won't go away",
-  "Recovering from anorexia",
-  "Body dysmorphia in your twenties",
   "After a spinal cord injury",
   "Tinnitus that won't quiet",
   "I'm in the dark middle",
-  "Hair loss in your thirties",
+  "So lonely",
+  "Really confused",
+  "Brain fog",
+  "Always tired",
+  "Can't stop checking",
+  "Pulling my hair",
 ];
 
 const SAMPLE_CYCLE_MS = 3500;

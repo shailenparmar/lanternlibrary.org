@@ -10,7 +10,7 @@ type ContributorTiles = {
   invitations: string[];
 };
 
-const RELEASE_THRESHOLD = 600;
+const RELEASE_THRESHOLD = 200;
 const VISIBLE_TAIL_CHARS = 400;
 const FADE_AFTER_MS = 2200;
 const FADE_DURATION_MS = 1600;
@@ -246,7 +246,7 @@ export function ContributorSurface() {
             }
             router.push("/reflect/preview");
           }}
-          className="inline-flex items-center gap-2 px-5 py-3 rounded-sm border font-sans text-sm tracking-wide border-flame/40 text-flame hover:bg-flame/[0.08] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-sm border font-sans text-sm tracking-wide border-flame/40 text-flame hover:bg-flame/[0.08] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors cursor-pointer"
           title={
             enoughToRelease
               ? "Render your draft into a story you'll review before publishing."

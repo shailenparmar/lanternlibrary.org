@@ -95,12 +95,12 @@ export function SearchSurface() {
         <SearchIcon />
         <input
           ref={inputRef}
-          type="search"
+          type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder=""
           autoFocus
-          className="w-full bg-transparent border border-rule rounded-sm pl-11 pr-16 py-3.5 font-serif text-lg leading-relaxed text-foreground/90 focus:outline-none focus:border-flame/50 transition-colors"
+          className="w-full bg-transparent border border-rule rounded-sm pl-11 pr-4 py-3.5 font-serif text-lg leading-relaxed text-foreground/90 focus:outline-none focus:border-flame/50 transition-colors"
         />
 
         {/* Cycling sample placeholders — only when input is empty */}
@@ -108,24 +108,10 @@ export function SearchSurface() {
           <div
             key={sampleIdx}
             aria-hidden="true"
-            className="pointer-events-none absolute left-11 right-16 top-1/2 -translate-y-1/2 font-serif italic text-foreground/40 truncate animate-sample-cycle"
+            className="pointer-events-none absolute left-11 right-4 top-1/2 -translate-y-1/2 font-serif italic text-foreground/40 truncate animate-sample-cycle"
           >
             {SAMPLE_QUERIES[sampleIdx]}
           </div>
-        )}
-
-        {!pending && query && (
-          <button
-            type="button"
-            onClick={() => {
-              setQuery("");
-              inputRef.current?.focus();
-            }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 font-sans text-xs text-muted hover:text-foreground transition-colors"
-            aria-label="Clear"
-          >
-            clear
-          </button>
         )}
       </div>
 

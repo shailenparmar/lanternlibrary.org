@@ -20,21 +20,26 @@ type StoryCard = {
 };
 
 const SAMPLE_QUERIES = [
-  "I'm losing my hair",
+  "I think I have BDD",
+  "Hate my own face",
+  "Stuck in the mirror",
+  "Compare myself constantly",
+  "Anxious all the time",
+  "Can't get out of bed",
+  "I think I'm depressed",
+  "Numb for months",
+  "So lonely",
+  "No one to talk to",
+  "Looking for community",
   "I think I have OCD",
-  "Hair loss in my twenties",
   "Struggling with anorexia",
-  "Body dysmorphia",
+  "I'm losing my hair",
   "Chronic pain that won't go away",
   "After a spinal cord injury",
-  "Tinnitus that won't quiet",
   "I'm in the dark middle",
-  "So lonely",
-  "Really confused",
   "Brain fog",
   "Always tired",
-  "Can't stop checking",
-  "Pulling my hair",
+  "Just got diagnosed",
 ];
 
 const SAMPLE_CYCLE_MS = 3500;

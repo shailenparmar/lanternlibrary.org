@@ -177,6 +177,17 @@ export default async function StoryPage({
             </ul>
           </section>
         )}
+
+        {/* End-of-article back link — saves a scroll-up after long reads */}
+        <div className="mt-20 pt-10 border-t border-rule flex justify-center">
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-3 px-5 py-2.5 rounded-sm border border-rule text-muted hover:text-flame hover:border-flame/40 transition-colors font-sans text-sm tracking-[0.18em] uppercase"
+          >
+            <span aria-hidden="true">←</span>
+            <span>Lantern Library</span>
+          </Link>
+        </div>
       </main>
 
       <footer className="font-sans text-xs text-muted flex flex-col sm:flex-row gap-2 sm:gap-6 pt-8 border-t border-rule">

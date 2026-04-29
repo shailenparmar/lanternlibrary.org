@@ -4,7 +4,7 @@ This is the source of truth for design and copy decisions. Before touching
 UI, color, animation, or user-facing copy, read this file. After making a
 decision worth codifying, update this file.
 
-Last updated: 2026-04-29 (preview/release flow added)
+Last updated: 2026-04-29 (preview/release flow + end-of-article back link)
 
 ---
 
@@ -86,6 +86,13 @@ back-and-wordmark link. No duplicate Wordmark component beside it.
 ```
 
 Home uses a plain `<Wordmark />` (no arrow).
+
+**Long-article pages also get a duplicate back affordance at the
+bottom**, just before the footer — saves the reader from scrolling all
+the way back up. Same "← Lantern Library" label, but rendered as a
+bordered, centered chip rather than a plain link, to read as a clear
+affordance after the article ends. Pattern lives at the bottom of
+`app/story/[slug]/page.tsx`.
 
 ### Footer
 

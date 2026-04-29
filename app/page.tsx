@@ -21,9 +21,10 @@ export default function Home() {
 
       <main className="relative z-10 flex flex-1 flex-col max-w-2xl mx-auto w-full pt-12 sm:pt-16 pb-8">
         <h1 className="font-serif text-3xl sm:text-4xl leading-[1.05] text-foreground mb-8">
-          A library of lanterns.{" "}
-          <span className="italic text-flame">Each one a story</span> for the
-          next.
+          A library of lanterns, each one a story{" "}
+          <span className="italic text-flame">
+            to guide you out of the dark.
+          </span>
         </h1>
 
         <SearchSurface />

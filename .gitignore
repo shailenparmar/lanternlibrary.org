@@ -42,9 +42,10 @@ server/lantern_reflect/__pycache__/
 server/transcripts/
 *.pyc
 
-# drizzle
-/drizzle/0*.sql
-/drizzle/meta
+# cloudflare / opennext
+/.open-next/
+/wrangler.toml.tmp
+.dev.vars
 
 # vercel
 .vercel

@@ -13,10 +13,11 @@ Old name: `lanter.ai` (deprecated — references in older docs).
 ## Stack
 
 - **Frontend**: Next.js 16 (App Router), TypeScript, Tailwind v4
-- **/read agent**: Anthropic SDK, Claude Opus 4.7 with prompt caching + tool use to surface 3–5 matching stories
-- **Storage**: Postgres + pgvector via Drizzle ORM. Falls back to in-memory `lib/stories.ts` when `DATABASE_URL` is unset.
-- **Reflection backend** (`server/`): Pipecat (Python) — Daily WebRTC + Deepgram Nova-3 + Claude Opus 4.7 + ElevenLabs Turbo v2.5. Currently a working scaffold; needs API keys to run end-to-end.
-- **Future per brief**: S3 (raw audio retention), Modal (bot orchestration)
+- **Search (home)**: Anthropic SDK, Claude Opus 4.7. Live tile output via tool use. Prompt-cached corpus.
+- **Reflect tiles (/reflect)**: same SDK, separate tool — phrases the contributor said back to them, plus one prompt question.
+- **Storage**: in-memory only (`lib/stories.ts`). The Postgres + Drizzle layer was removed because Cloudflare Workers don't run `node-postgres`. When real story volume warrants a DB, swap to a serverless-friendly driver (Neon over HTTP).
+- **Reflection backend** (`server/`): Pipecat (Python) — Daily WebRTC + Deepgram Nova-3 + Claude Opus 4.7 + ElevenLabs Turbo v2.5. Working scaffold; needs API keys to run end-to-end.
+- **Hosting**: Cloudflare Workers via `@opennextjs/cloudflare` (the modern OpenNext adapter for Next.js 16). Built bundle goes to `.open-next/`. Domain DNS lives on Cloudflare too.
 
 ## Commands
 
@@ -26,12 +27,10 @@ npm run dev              # dev server (localhost:3000)
 npm run build            # production build
 npm run lint             # eslint
 
-# Postgres (optional — app works without it)
-npm run db:up            # docker compose up -d (pgvector/pg16)
-npm run db:push          # push drizzle schema
-npm run db:seed          # seed from lib/stories.ts + lib/tiles.ts
-npm run db:studio        # drizzle-kit studio (browse data)
-npm run db:down          # stop and remove the db container
+# Cloudflare deploy
+npm run cf:build         # bundle the Worker into .open-next/
+npm run cf:preview       # local preview against the Worker bundle
+npm run cf:deploy        # deploy via wrangler (requires `wrangler login`)
 
 # Reflection bot (server/)
 cd server && python -m venv .venv && source .venv/bin/activate
@@ -42,8 +41,7 @@ python -m lantern_reflect.bot --room-url ...  # one-off bot
 
 ## Env vars
 
-- `ANTHROPIC_API_KEY` — required for `/read` agent. Without it the API returns 503 with a helpful message.
-- `DATABASE_URL` — optional. When set, `lib/storage.ts` reads from Postgres; otherwise from `lib/stories.ts`.
+- `ANTHROPIC_API_KEY` — required for the search and reflect tile APIs. Without it the routes return 503.
 - `server/.env` — separate env file for the Python reflection backend (Daily, Deepgram, ElevenLabs, Anthropic).
 
 ## Source-of-truth context
@@ -83,25 +81,20 @@ app/
 components/                      # Wordmark, Lantern, SampleBadge
 
 lib/
-  stories.ts                     # in-memory sample stories (source of truth until DB seeded)
+  stories.ts                     # in-memory sample story corpus (source of truth)
   tiles.ts                       # condition + theme tiles
-  storage.ts                     # async data layer — DB if DATABASE_URL else in-memory
-  llm.ts                         # Anthropic SDK setup + read-agent matching
-  db/
-    schema.ts                    # Drizzle schema (stories + tiles + pgvector embedding)
-    index.ts                     # lazy DB client
-
-scripts/db-seed.ts               # tsx script: push lib/stories.ts into Postgres
-
-drizzle/init/00_extension.sql    # enables pgvector on container init
-docker-compose.yml               # local pgvector/pg16 on port 5433
+  storage.ts                     # thin async wrapper around the in-memory data
+  llm.ts                         # Anthropic SDK setup + search + reflect tile prompts
 
 server/                          # Python — Pipecat reflection backend
   pyproject.toml
   lantern_reflect/
     bot.py                       # Pipecat pipeline (Daily/Deepgram/Claude/ElevenLabs)
     server.py                    # FastAPI room launcher
-    prompts.py                   # 8-beat system prompt
+    prompts.py                   # eight-beat system prompt (internal LLM signal only)
+
+wrangler.jsonc                   # Cloudflare Worker config (compatibility flags, asset binding)
+open-next.config.ts              # OpenNext adapter config (defaults)
 ```
 
 ## Copy notes

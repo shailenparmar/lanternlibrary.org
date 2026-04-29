@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Wordmark } from "@/components/Wordmark";
 import { Lantern } from "@/components/Lantern";
 import { SampleBadge } from "@/components/SampleBadge";
 import { stories as inMemoryStories } from "@/lib/stories";
@@ -38,13 +37,13 @@ export default async function StoryPage({
 
   return (
     <div className="flex flex-col flex-1 px-6 py-10 sm:px-12 sm:py-16">
-      <header className="flex items-center justify-between">
-        <Wordmark />
+      <header>
         <Link
           href="/"
-          className="font-sans text-sm tracking-wide text-muted hover:text-foreground transition-colors"
+          className="font-sans text-sm tracking-[0.18em] uppercase text-muted hover:text-foreground transition-colors inline-flex items-center gap-2"
         >
-          ← back
+          <span aria-hidden="true">←</span>
+          <span>Lantern Library</span>
         </Link>
       </header>
 

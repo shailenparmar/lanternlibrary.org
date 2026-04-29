@@ -2,6 +2,26 @@
 
 # Lantern Library — CLAUDE.md
 
+## Style guide workflow — load-bearing
+
+`STYLE_GUIDE.md` (in this directory) is the source of truth for design and
+copy decisions. Treat it as a living document, not a snapshot.
+
+**Before any UI, copy, color, animation, or component change:**
+1. Read `STYLE_GUIDE.md`. Use it to inform the change.
+2. If the change conflicts with the guide, raise that with the user
+   explicitly — don't silently override.
+
+**After any UI, copy, color, animation, or component change that
+establishes (or shifts) a pattern:**
+1. Update the relevant section of `STYLE_GUIDE.md` *in the same commit*.
+2. Date the section you touched (`Last updated: YYYY-MM-DD`).
+3. If you found yourself making a one-off decision a second time in this
+   conversation, that's a sign it should be codified — add it.
+
+The guide is short and opinionated by design. Don't pad it with vague
+principles. Encode specific decisions and the reasoning when non-obvious.
+
 ## Overview
 
 Nonprofit archive of identity-reconstruction recovery stories (BDD, OCD, hair loss, chronic pain, etc.). People who made it through hard chapters sit with a warm AI-guided reflection tool (voice + text, simultaneous) and leave wisdom for the next person walking the same path. Founder records her own BDD recovery story first; everything else follows.

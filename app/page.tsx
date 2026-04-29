@@ -24,15 +24,16 @@ export default function Home() {
         <SearchSurface />
 
         <div className="mt-16 pt-10 border-t border-rule flex flex-col items-center gap-4">
-          <p className="font-serif text-base text-foreground/70 text-center">
-            Made it through your own dark chapter?
+          <p className="font-serif text-base sm:text-lg text-foreground/75 text-center max-w-md">
+            Made it through something hard? Share a lantern to help others
+            in the dark middle.
           </p>
           <Link
             href="/reflect"
             className="group inline-flex items-center gap-3 px-6 py-3 rounded-sm border border-flame/40 bg-flame/[0.06] text-flame hover:bg-flame/[0.12] hover:border-flame/70 transition-all font-sans text-sm tracking-wide"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-flame shadow-[0_0_8px_2px_rgba(244,162,60,0.6)]" />
-            <span>Share your story</span>
+            <span>Ten minute reflection</span>
             <span className="opacity-60 group-hover:opacity-100 transition-opacity">
               →
             </span>

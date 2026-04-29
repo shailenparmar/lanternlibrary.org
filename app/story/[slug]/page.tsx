@@ -178,11 +178,28 @@ export default async function StoryPage({
           </section>
         )}
 
-        {/* End-of-article back link — saves a scroll-up after long reads */}
-        <div className="mt-20 pt-10 border-t border-rule flex justify-center">
+        {/* End-of-article: share-a-lantern CTA + back-to-library chip */}
+        <section className="mt-20 pt-10 border-t border-rule flex flex-col items-center gap-4">
+          <p className="font-serif text-base sm:text-lg text-foreground/75 text-center max-w-md">
+            Made it through something hard? Share a lantern to help others
+            in the dark middle.
+          </p>
+          <Link
+            href="/reflect"
+            className="group inline-flex items-center gap-3 px-6 py-3 rounded-sm border border-flame/40 bg-flame/[0.06] text-flame hover:bg-flame/[0.12] hover:border-flame/70 transition-all font-sans text-sm tracking-wide"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-flame shadow-[0_0_8px_2px_rgba(244,162,60,0.6)]" />
+            <span>Ten minute reflection</span>
+            <span className="opacity-60 group-hover:opacity-100 transition-opacity">
+              →
+            </span>
+          </Link>
+        </section>
+
+        <div className="mt-12 flex justify-center">
           <Link
             href="/"
-            className="group inline-flex items-center gap-3 px-5 py-2.5 rounded-sm border border-rule text-muted hover:text-flame hover:border-flame/40 transition-colors font-sans text-sm tracking-[0.18em] uppercase"
+            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-sm border border-rule text-muted hover:text-flame hover:border-flame/40 transition-colors font-sans text-sm tracking-[0.18em] uppercase"
           >
             <span aria-hidden="true">←</span>
             <span>Lantern Library</span>

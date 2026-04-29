@@ -9,14 +9,8 @@ export default function Home() {
     <div className="relative flex flex-col flex-1 px-6 sm:px-12 py-8 sm:py-10">
       <LanternField />
 
-      <header className="relative z-10 flex items-center justify-between">
+      <header className="relative z-10">
         <Wordmark />
-        <Link
-          href="/reflect"
-          className="font-sans text-xs tracking-wide text-muted hover:text-flame transition-colors"
-        >
-          share yours →
-        </Link>
       </header>
 
       <main className="relative z-10 flex flex-1 flex-col max-w-2xl mx-auto w-full pt-12 sm:pt-16 pb-8">
@@ -28,6 +22,22 @@ export default function Home() {
         </h1>
 
         <SearchSurface />
+
+        <div className="mt-16 pt-10 border-t border-rule flex flex-col items-center gap-4">
+          <p className="font-serif text-base text-foreground/70 text-center">
+            Made it through your own dark chapter?
+          </p>
+          <Link
+            href="/reflect"
+            className="group inline-flex items-center gap-3 px-6 py-3 rounded-sm border border-flame/40 bg-flame/[0.06] text-flame hover:bg-flame/[0.12] hover:border-flame/70 transition-all font-sans text-sm tracking-wide"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-flame shadow-[0_0_8px_2px_rgba(244,162,60,0.6)]" />
+            <span>Share your story</span>
+            <span className="opacity-60 group-hover:opacity-100 transition-opacity">
+              →
+            </span>
+          </Link>
+        </div>
       </main>
 
       <div className="relative z-10">

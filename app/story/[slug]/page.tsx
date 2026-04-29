@@ -182,7 +182,7 @@ export default async function StoryPage({
 
       <footer className="font-sans text-xs text-muted flex flex-col sm:flex-row gap-2 sm:gap-6 pt-8 border-t border-rule">
         <span>lanternlibrary.org</span>
-        <span>A nonprofit archive.</span>
+        <span>An independent archive.</span>
         <span>Not medical advice.</span>
       </footer>
     </div>

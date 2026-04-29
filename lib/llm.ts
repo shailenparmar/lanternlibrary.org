@@ -41,7 +41,7 @@ function buildCorpus(): string {
     .join("\n\n");
 }
 
-const SEARCH_SYSTEM = `You are the search interface for Lantern Library — a nonprofit archive of recovery stories. A reader has typed a query. Your job: return story matches + a few follow-up search suggestions that refine the query.
+const SEARCH_SYSTEM = `You are the search interface for Lantern Library — an independent archive of recovery stories. A reader has typed a query. Your job: return story matches + a few follow-up search suggestions that refine the query.
 
 Respond ONLY by calling the surface_search_results tool. No text response.
 

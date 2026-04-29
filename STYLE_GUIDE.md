@@ -4,7 +4,7 @@ This is the source of truth for design and copy decisions. Before touching
 UI, color, animation, or user-facing copy, read this file. After making a
 decision worth codifying, update this file.
 
-Last updated: 2026-04-29
+Last updated: 2026-04-29 (preview/release flow added)
 
 ---
 
@@ -118,6 +118,31 @@ top of a long-form reading surface (story pages don't use it).
   feeling-level phrases. Light on any one cluster (no more than ~1
   hair-loss entry, etc.). See `components/SearchSurface.tsx` `SAMPLE_QUERIES`.
 - Loading state is **shimmer skeletons** (3 cards), not verbal "searching."
+
+### Reflect → Preview → Released flow
+
+Three-step contribution path:
+
+1. **`/reflect`** — ephemeral typing surface (`ContributorSurface`).
+   Threshold to advance: 600 chars. On click of "I'm ready to see my
+   lantern," draft saves to `sessionStorage` (key: `lantern.draft`) and
+   navigates to `/reflect/preview`.
+2. **`/reflect/preview`** — calls `/api/render` with the draft, shows
+   shimmer skeleton while waiting. Result is a `RenderedLantern`
+   (title, dek, prose paragraphs, optional pull quote). Every field is
+   inline-editable via auto-grow textareas styled to feel like prose,
+   not form inputs (no visible borders until hover/focus). Bottom of
+   the page collects a contributor credit and a "Release my lantern"
+   final button. Releasing saves to `localStorage` (key:
+   `lantern.released`) and clears the sessionStorage draft.
+3. **`/reflect/released`** — confirmation: glowing flame dot at top,
+   "Your lantern is *lit*" heading, the released title/dek shown back,
+   a back-to-library button. The "edit/redact/take down" assurance is
+   visible (mirrors the brief's content governance).
+
+Honest caveats today: localStorage stores releases (no real backend),
+"we'll email you a private link" is aspirational copy. Both should
+become real when the publishing pipeline is wired.
 
 ### Reflect surface (`ContributorSurface`)
 

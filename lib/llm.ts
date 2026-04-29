@@ -134,6 +134,13 @@ export type ContributorTiles = {
   invitations: string[];
 };
 
+export type RenderedLantern = {
+  title: string;
+  dek: string;
+  prose: string[];
+  pullQuote: { text: string; afterParagraph: number } | null;
+};
+
 export async function searchStories(query: string): Promise<SearchResults> {
   const response = await getClient().messages.create({
     model: "claude-opus-4-7",
@@ -171,6 +178,117 @@ export async function searchStories(query: string): Promise<SearchResults> {
     }
   }
   return { storySlugs: [], followUps: [] };
+}
+
+const RENDER_SYSTEM = `You are the renderer for Lantern Library — an independent archive of recovery stories. A contributor has shared a raw reflection in their own voice, possibly disorganized. Produce a structured story object they will review before publishing.
+
+Voice and form:
+- Warm, restrained, literary. Closer to a ghostwritten magazine chapter than a cleaned-up transcript.
+- PRESERVE the contributor's specific phrases and idioms. Do NOT homogenize into a platform voice. The Lantern Library voice is structural (paragraphing, flow, removing verbal tics like "um" or "you know") — NOT tonal.
+- Keep emotionally specific lines, idiosyncratic metaphors, dialogue, and time markers verbatim or near-verbatim wherever they earn it. The piece may hand the mic back explicitly: "In her words: [quote]" — but only if it serves the rhythm; don't force it.
+- Length: 600–1500 words. Aim for the upper end if the contributor wrote a lot; lower if they were terse. NEVER pad with material they didn't provide.
+- 4 to 8 paragraphs.
+
+Structure:
+- The recovery-story arc tends to cover: onset, the dark middle, search for help, the turn, what changed, setbacks, where they are now, and (often) a letter to past self. Use these as INTERNAL guidance only. Do NOT use them as visible section headers, and do NOT invent material to fill missing beats. If the contributor only wrote about onset and setbacks, render only what's there.
+- Title (6–12 words): evocative, not clinical. Often a sentence in the contributor's own voice. Examples of the texture: "I was certain my face was the problem.", "The ringing did not get quieter. I did.", "I pulled in private for fifteen years.", "What my hands needed and what I needed were not the same thing."
+- Dek (15–25 words): one sentence orienting subtitle. Specific.
+- Pull quote: pick one sentence from the contributor's own words distinctive enough to earn pull-quote treatment. Specify which paragraph index it should appear AFTER (0-indexed). If nothing earns it, return null.
+
+Hard rules:
+- Output ONLY via the render_lantern tool. No text response.
+- Do NOT invent details the contributor did not provide.
+- Do NOT therapize, psychoanalyze, or hand out advice the contributor didn't include.
+- Do NOT use second-person ("you should…"). Keep the contributor's first-person.
+- Do NOT add platitudes, wrap-up clichés, or "and that's how I learned…" endings.`;
+
+const RENDER_TOOL: Anthropic.Tool = {
+  name: "render_lantern",
+  description:
+    "Return the structured rendered story (title, dek, prose paragraphs, optional pull quote). Always call this — never produce a text response.",
+  input_schema: {
+    type: "object",
+    properties: {
+      title: {
+        type: "string",
+        description:
+          "6–12 word title, often a sentence in the contributor's voice.",
+      },
+      dek: {
+        type: "string",
+        description: "One-sentence orienting subtitle, 15–25 words.",
+      },
+      prose: {
+        type: "array",
+        items: { type: "string" },
+        description:
+          "4–8 paragraphs. Each paragraph is a string with no surrounding quotes.",
+        minItems: 3,
+        maxItems: 10,
+      },
+      pull_quote: {
+        type: "object",
+        nullable: true,
+        properties: {
+          text: {
+            type: "string",
+            description:
+              "One sentence drawn from the contributor's own words.",
+          },
+          after_paragraph: {
+            type: "integer",
+            description: "0-indexed paragraph index after which to display.",
+          },
+        },
+        required: ["text", "after_paragraph"],
+      },
+    },
+    required: ["title", "dek", "prose"],
+  },
+};
+
+export async function renderLantern(draft: string): Promise<RenderedLantern> {
+  const response = await getClient().messages.create({
+    model: "claude-opus-4-7",
+    max_tokens: 4096,
+    system: [
+      {
+        type: "text",
+        text: RENDER_SYSTEM,
+        cache_control: { type: "ephemeral" },
+      },
+    ],
+    tools: [RENDER_TOOL],
+    tool_choice: { type: "tool", name: "render_lantern" },
+    messages: [
+      {
+        role: "user",
+        content: `<draft>\n${draft}\n</draft>`,
+      },
+    ],
+  });
+
+  for (const block of response.content) {
+    if (block.type === "tool_use" && block.name === "render_lantern") {
+      const input = block.input as {
+        title?: string;
+        dek?: string;
+        prose?: string[];
+        pull_quote?: { text: string; after_paragraph: number } | null;
+      };
+      const pq = input.pull_quote;
+      return {
+        title: input.title ?? "",
+        dek: input.dek ?? "",
+        prose: (input.prose ?? []).filter((p) => p.trim().length > 0),
+        pullQuote:
+          pq && typeof pq.text === "string"
+            ? { text: pq.text, afterParagraph: pq.after_paragraph ?? 0 }
+            : null,
+      };
+    }
+  }
+  throw new Error("Renderer did not return a structured response.");
 }
 
 export async function liveContributorTiles(

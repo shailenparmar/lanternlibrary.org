@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useLiveTiles } from "./useLiveTiles";
 import { useDictation } from "./useDictation";
 
@@ -14,7 +15,10 @@ const VISIBLE_TAIL_CHARS = 400;
 const FADE_AFTER_MS = 2200;
 const FADE_DURATION_MS = 1600;
 
+export const DRAFT_STORAGE_KEY = "lantern.draft";
+
 export function ContributorSurface() {
+  const router = useRouter();
   const [draft, setDraft] = useState("");
   // sessionStart marks the position in `draft` where the CURRENT visible
   // bubble began. When the bubble fades out completely, sessionStart is
@@ -233,10 +237,19 @@ export function ContributorSurface() {
         <button
           type="button"
           disabled={!enoughToRelease}
+          onClick={() => {
+            if (!enoughToRelease) return;
+            try {
+              sessionStorage.setItem(DRAFT_STORAGE_KEY, draft);
+            } catch {
+              // sessionStorage can fail in private browsing — just navigate.
+            }
+            router.push("/reflect/preview");
+          }}
           className="inline-flex items-center gap-2 px-5 py-3 rounded-sm border font-sans text-sm tracking-wide border-flame/40 text-flame hover:bg-flame/[0.08] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
           title={
             enoughToRelease
-              ? "Send your draft to the rendering pipeline; you'll review before publishing."
+              ? "Render your draft into a story you'll review before publishing."
               : "Keep going."
           }
         >

@@ -181,7 +181,12 @@ export default async function StoryPage({
       </main>
 
       <footer className="font-sans text-xs text-muted flex flex-col sm:flex-row gap-2 sm:gap-6 pt-8 border-t border-rule">
-        <span>lanternlibrary.org</span>
+        <a
+          href="mailto:hello@lanternlibrary.org"
+          className="hover:text-foreground transition-colors"
+        >
+          hello@lanternlibrary.org
+        </a>
         <span>An independent archive.</span>
         <span>Not medical advice.</span>
       </footer>

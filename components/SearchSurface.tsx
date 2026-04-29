@@ -19,8 +19,24 @@ type StoryCard = {
   dek: string;
 };
 
+const SAMPLE_QUERIES = [
+  "What are you walking through?",
+  "I'm losing my hair",
+  "I think I have OCD",
+  "Chronic pain that won't go away",
+  "Recovering from anorexia",
+  "Body dysmorphia in your twenties",
+  "After a spinal cord injury",
+  "Tinnitus that won't quiet",
+  "I'm in the dark middle",
+  "Hair loss in your thirties",
+];
+
+const SAMPLE_CYCLE_MS = 3500;
+
 export function SearchSurface() {
   const [query, setQuery] = useState("");
+  const [sampleIdx, setSampleIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const { data, pending, error } = useLiveTiles<SearchResults>({
     endpoint: "/api/search",
@@ -30,6 +46,16 @@ export function SearchSurface() {
     debounceMs: 600,
   });
   const [storyMeta, setStoryMeta] = useState<Record<string, StoryCard>>({});
+
+  // Cycle sample placeholders only when input is empty.
+  useEffect(() => {
+    if (query.length > 0) return;
+    const t = setInterval(
+      () => setSampleIdx((i) => (i + 1) % SAMPLE_QUERIES.length),
+      SAMPLE_CYCLE_MS,
+    );
+    return () => clearInterval(t);
+  }, [query]);
 
   useEffect(() => {
     const slugs = data?.storySlugs ?? [];
@@ -51,6 +77,8 @@ export function SearchSurface() {
     .map((slug) => storyMeta[slug])
     .filter((s): s is StoryCard => Boolean(s));
 
+  const showShimmer = pending && query.trim().length >= 3;
+
   return (
     <div className="space-y-6">
       <div className="relative">
@@ -60,15 +88,22 @@ export function SearchSurface() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="What are you walking through?"
+          placeholder=""
           autoFocus
-          className="w-full bg-transparent border border-rule rounded-sm pl-11 pr-16 py-3.5 font-serif text-lg leading-relaxed text-foreground/90 placeholder:text-foreground/40 placeholder:italic focus:outline-none focus:border-flame/50 transition-colors"
+          className="w-full bg-transparent border border-rule rounded-sm pl-11 pr-16 py-3.5 font-serif text-lg leading-relaxed text-foreground/90 focus:outline-none focus:border-flame/50 transition-colors"
         />
-        {pending && (
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 font-sans text-[10px] tracking-[0.2em] uppercase text-flame/70 animate-pulse">
-            searching
-          </span>
+
+        {/* Cycling sample placeholders — only when input is empty */}
+        {query.length === 0 && (
+          <div
+            key={sampleIdx}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-11 right-16 top-1/2 -translate-y-1/2 font-serif italic text-foreground/40 truncate animate-sample-cycle"
+          >
+            {SAMPLE_QUERIES[sampleIdx]}
+          </div>
         )}
+
         {!pending && query && (
           <button
             type="button"
@@ -85,6 +120,22 @@ export function SearchSurface() {
       </div>
 
       {error && <p className="font-sans text-xs text-flame/80">{error}</p>}
+
+      {/* Shimmer skeletons while loading */}
+      {showShimmer && storyCards.length === 0 && (
+        <ul className="space-y-2" aria-hidden="true">
+          {[0, 1, 2].map((i) => (
+            <li
+              key={i}
+              className="rounded-sm border border-rule px-4 py-3 overflow-hidden relative animate-shimmer"
+            >
+              <div className="h-5 w-3/4 rounded-sm bg-foreground/[0.06]" />
+              <div className="h-3.5 w-5/6 rounded-sm bg-foreground/[0.04] mt-2" />
+              <div className="h-3 w-1/3 rounded-sm bg-foreground/[0.04] mt-2.5" />
+            </li>
+          ))}
+        </ul>
+      )}
 
       {storyCards.length > 0 && (
         <ul className="space-y-2">

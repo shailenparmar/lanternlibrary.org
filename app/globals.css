@@ -88,11 +88,47 @@ body {
   animation: breathing 2200ms ease-in-out infinite;
 }
 
+@keyframes sample-cycle {
+  0%, 100% { opacity: 0; }
+  10%, 90% { opacity: 1; }
+}
+
+.animate-sample-cycle {
+  animation: sample-cycle 3500ms ease-in-out;
+}
+
+@keyframes shimmer-sweep {
+  0% { background-position: -150% 0; }
+  100% { background-position: 250% 0; }
+}
+
+.animate-shimmer {
+  position: relative;
+}
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 162, 60, 0.06) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-sweep 1800ms ease-in-out infinite;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-lantern-drift,
   .animate-tile-in,
   .animate-floating-word,
-  .animate-breathing {
+  .animate-breathing,
+  .animate-sample-cycle {
+    animation: none;
+  }
+  .animate-shimmer::after {
     animation: none;
   }
 }

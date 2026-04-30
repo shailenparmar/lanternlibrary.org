@@ -4,7 +4,7 @@ This is the source of truth for design and copy decisions. Before touching
 UI, color, animation, or user-facing copy, read this file. After making a
 decision worth codifying, update this file.
 
-Last updated: 2026-04-29 (preview/release flow + end-of-article back link)
+Last updated: 2026-04-29 (preview/release flow; end-of-article back link; complete-idea gating on fade and tiles)
 
 ---
 
@@ -161,6 +161,16 @@ become real when the publishing pipeline is wired.
   off as new ones come in.
 - Live text **does not return after fading**. Each fade resets
   `sessionStart` to current draft length so the next input starts fresh.
+- **Fade only fires after a complete idea.** If the visible chunk ends in
+  terminal punctuation (`.`, `?`, `!`, or newline), schedule fade after
+  3s. If it doesn't, the text stays on screen indefinitely — let the
+  contributor finish the thought.
+- **Reflector tiles only update after a complete idea.** The tile API
+  receives `commitToLastIdea(draft)` — the longest prefix of the draft
+  that ends in terminal punctuation. Mid-sentence pauses don't surface
+  new tiles. This trains the contributor that a sentence is the unit of
+  reflection, and avoids interrupting them with system feedback while
+  they're still mid-thought.
 - Bottom: mic button (left) + "I'm ready to see my lantern" (right).
 - `keep going` flame label appears above the buttons until draft hits the
   release threshold (`RELEASE_THRESHOLD = 600` chars).

@@ -1,9 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLiveTiles } from "./useLiveTiles";
 import { useDictation } from "./useDictation";
+
+const TERMINAL_PUNCT = /[.!?\n]/;
+const TRAILING_TERMINAL = /[.!?\n]\s*$/;
+
+// Returns the longest prefix of `text` that ends in terminal punctuation.
+// "I am sad. And lost" → "I am sad."
+// "I am sad" → ""
+function commitToLastIdea(text: string): string {
+  let lastIdx = -1;
+  for (let i = 0; i < text.length; i++) {
+    if (TERMINAL_PUNCT.test(text[i])) lastIdx = i;
+  }
+  return lastIdx >= 0 ? text.slice(0, lastIdx + 1) : "";
+}
 
 type ContributorTiles = {
   phrases: string[];
@@ -12,7 +26,7 @@ type ContributorTiles = {
 
 const RELEASE_THRESHOLD = 200;
 const VISIBLE_TAIL_CHARS = 400;
-const FADE_AFTER_MS = 2200;
+const FADE_AFTER_MS = 3000;
 const FADE_DURATION_MS = 1600;
 
 export const DRAFT_STORAGE_KEY = "lantern.draft";
@@ -35,9 +49,13 @@ export function ContributorSurface() {
       setDraft((d) => (d.endsWith(" ") || d === "" ? d : d + " ") + text),
   });
 
+  // Tile API only sees the part of the draft that has been "committed" via
+  // terminal punctuation. Mid-sentence pauses don't trigger updates — let
+  // the contributor finish a thought before reflecting back.
+  const committedDraft = useMemo(() => commitToLastIdea(draft), [draft]);
   const { data, error } = useLiveTiles<ContributorTiles>({
     endpoint: "/api/tiles/reflect",
-    draft,
+    draft: committedDraft,
     minLength: 20,
   });
 
@@ -71,15 +89,22 @@ export function ContributorSurface() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Schedule the fade-out and the post-fade clear on each input.
+  // Schedule the fade-out only when the visible chunk ends a complete
+  // idea (sentence-terminal punctuation or a newline). Mid-sentence pauses
+  // don't trigger fade — the contributor's thought stays on screen until
+  // they finish it.
   useEffect(() => {
-    const hasNewInput =
-      draft.length > sessionStart || dictation.interim.length > 0;
+    const segment = draft.slice(sessionStart);
+    const hasNewInput = segment.length > 0 || dictation.interim.length > 0;
     if (!hasNewInput) return;
 
     setShowing(true);
     if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
     if (clearTimerRef.current) clearTimeout(clearTimerRef.current);
+
+    const trimmedSegment = segment.trimEnd();
+    const endsOnCompleteIdea = TRAILING_TERMINAL.test(trimmedSegment);
+    if (!endsOnCompleteIdea) return;
 
     fadeTimerRef.current = setTimeout(() => {
       setShowing(false);

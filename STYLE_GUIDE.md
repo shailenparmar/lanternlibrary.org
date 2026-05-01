@@ -4,7 +4,7 @@ This is the source of truth for design and copy decisions. Before touching
 UI, color, animation, or user-facing copy, read this file. After making a
 decision worth codifying, update this file.
 
-Last updated: 2026-04-29 (preview/release flow; end-of-article back link; complete-idea gating on fade and tiles)
+Last updated: 2026-04-30 (mobile voice-first reflect surface)
 
 ---
 
@@ -171,6 +171,12 @@ become real when the publishing pipeline is wired.
   new tiles. This trains the contributor that a sentence is the unit of
   reflection, and avoids interrupting them with system feedback while
   they're still mid-thought.
+- **Mobile (<768px) is voice-first.** The live ephemeral display is
+  hidden on mobile (`hidden md:flex`); the mic button sits high in the
+  viewport instead. Phones don't get a "start typing" affordance — the
+  expectation is that on a phone you tap the mic and talk. Auto-listen
+  keystroke forwarding still works for Bluetooth keyboards, but it's
+  not surfaced as the primary input.
 - Bottom: mic button (left) + "I'm ready to see my lantern" (right).
 - `keep going` flame label appears above the buttons until draft hits the
   release threshold (`RELEASE_THRESHOLD = 600` chars).

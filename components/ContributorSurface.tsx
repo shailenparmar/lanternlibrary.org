@@ -203,9 +203,11 @@ export function ContributorSurface() {
       </div>
 
       {/* Live ephemeral display — type or speak shows here, lines shift up
-          and fade off the top, fades to transparent on pause */}
+          and fade off the top, fades to transparent on pause.
+          Hidden on mobile: phones get voice-only, with the mic button
+          taking the dominant input position. */}
       <div
-        className="w-full text-center font-serif text-2xl sm:text-3xl text-foreground/85 px-2 overflow-hidden flex flex-col justify-end transition-opacity duration-[1600ms] ease-out"
+        className="hidden md:flex w-full text-center font-serif text-2xl sm:text-3xl text-foreground/85 px-2 overflow-hidden md:flex-col md:justify-end transition-opacity duration-[1600ms] ease-out"
         style={{
           opacity: liveText ? (showing ? 1 : 0) : 0.3,
           lineHeight: 1.5,
@@ -228,7 +230,7 @@ export function ContributorSurface() {
       </div>
 
       {/* Keep-going hint — only when draft is partway there */}
-      <div className="mt-12 min-h-[1.25rem] font-sans text-[11px] tracking-[0.2em] uppercase text-flame/70">
+      <div className="mt-4 md:mt-12 min-h-[1.25rem] font-sans text-[11px] tracking-[0.2em] uppercase text-flame/70">
         {draft.trim().length > 0 && !enoughToRelease && (
           <span>keep going</span>
         )}

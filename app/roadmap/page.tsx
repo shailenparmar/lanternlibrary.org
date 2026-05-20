@@ -156,61 +156,6 @@ export default function RoadmapPage() {
 
           <section>
             <h2 className="font-sans text-xs tracking-[0.2em] uppercase text-muted mb-4">
-              Where it is going
-            </h2>
-            <p className="text-foreground/70 italic mb-6">
-              Conditions are sequenced by editorial standing and recovery
-              shape, not by addressable market. We expand coherently
-              within a cluster before jumping.
-            </p>
-
-            <div className="space-y-7">
-              <div>
-                <p className="font-sans text-xs tracking-[0.2em] uppercase text-flame">
-                  Months 1&ndash;6 &middot; OCD-spectrum
-                </p>
-                <p className="mt-2">
-                  Body dysmorphic disorder first &mdash; the
-                  founder&rsquo;s home. OCD broadly. The cluster where we
-                  have the deepest editorial footing.
-                </p>
-              </div>
-              <div>
-                <p className="font-sans text-xs tracking-[0.2em] uppercase text-flame">
-                  Months 7&ndash;12 &middot; Body image &amp; self-perception
-                </p>
-                <p className="mt-2">
-                  Hair loss, which has a strong recovery-content culture
-                  and is underserved by anything literary. Eating
-                  disorders, which require the highest editorial care and
-                  dedicated moderation before we publish a single piece.
-                </p>
-              </div>
-              <div>
-                <p className="font-sans text-xs tracking-[0.2em] uppercase text-flame">
-                  Year 2 &middot; Body change &amp; physical ability
-                </p>
-                <p className="mt-2">
-                  Chronic pain (knee, back, foot, orthopedic).
-                  Sports-injury aftermath. Paralysis and limb difference.
-                  Conditions where recovery means rebuilding identity
-                  around the body you actually have.
-                </p>
-              </div>
-              <div>
-                <p className="font-sans text-xs tracking-[0.2em] uppercase text-flame">
-                  Later, with care
-                </p>
-                <p className="mt-2">
-                  Tinnitus, long COVID, grief, addiction recovery. Each
-                  needs its own editorial frame before it gets a shelf.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="font-sans text-xs tracking-[0.2em] uppercase text-muted mb-4">
               Care, consent, and governance
             </h2>
             <p className="text-foreground/70 italic mb-6">

@@ -1,23 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLiveTiles } from "./useLiveTiles";
 import { useDictation } from "./useDictation";
 
-const TERMINAL_PUNCT = /[.!?\n]/;
 const TRAILING_TERMINAL = /[.!?\n]\s*$/;
-
-// Returns the longest prefix of `text` that ends in terminal punctuation.
-// "I am sad. And lost" → "I am sad."
-// "I am sad" → ""
-function commitToLastIdea(text: string): string {
-  let lastIdx = -1;
-  for (let i = 0; i < text.length; i++) {
-    if (TERMINAL_PUNCT.test(text[i])) lastIdx = i;
-  }
-  return lastIdx >= 0 ? text.slice(0, lastIdx + 1) : "";
-}
 
 type ContributorTiles = {
   phrases: string[];
@@ -52,10 +40,9 @@ export function ContributorSurface() {
   // Tile API only sees the part of the draft that has been "committed" via
   // terminal punctuation. Mid-sentence pauses don't trigger updates — let
   // the contributor finish a thought before reflecting back.
-  const committedDraft = useMemo(() => commitToLastIdea(draft), [draft]);
   const { data, error } = useLiveTiles<ContributorTiles>({
     endpoint: "/api/tiles/reflect",
-    draft: committedDraft,
+    draft,
     minLength: 20,
   });
 

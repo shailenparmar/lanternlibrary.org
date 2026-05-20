@@ -13,7 +13,7 @@ export default function Home() {
         <Wordmark />
         <Link
           href="/roadmap"
-          className="font-sans text-sm tracking-[0.18em] uppercase text-muted hover:text-foreground transition-colors"
+          className="font-sans text-xs tracking-[0.18em] uppercase text-foreground/85 hover:text-flame border border-rule hover:border-flame/50 rounded-sm px-3.5 py-2 transition-colors"
         >
           Roadmap
         </Link>

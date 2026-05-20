@@ -60,6 +60,100 @@ export default function RoadmapPage() {
 
           <section>
             <h2 className="font-sans text-xs tracking-[0.2em] uppercase text-muted mb-4">
+              Care, consent, and governance
+            </h2>
+            <p className="text-foreground/70 italic mb-6">
+              The legal and ethical posture of the archive, in plain
+              language. These are commitments, not aspirations.
+            </p>
+            <ul className="space-y-5">
+              <li>
+                <span className="text-flame">·</span>{" "}
+                <em>Anonymity is the contributor&rsquo;s choice.</em> Every
+                contributor decides how they appear &mdash; full name, first
+                name and last initial, initials, a chosen pseudonym, or
+                fully anonymous. Identifying details about third parties
+                (therapists, family, employers) are stripped during
+                rendering by default and re-introduced only if the
+                contributor explicitly asks for them back.
+              </li>
+              <li>
+                <span className="text-flame">·</span>{" "}
+                <em>Nothing publishes without explicit approval.</em>{" "}
+                After a reflection, the contributor reviews both the
+                structured fields and the rendered prose. They can edit,
+                redact, adjust identity settings, decline, or approve.
+                Silence is not consent.
+              </li>
+              <li>
+                <span className="text-flame">·</span>{" "}
+                <em>Three operations on a published story:</em>{" "}
+                <strong>delete</strong> (immediate takedown, seven-day
+                grace period, no justification required),{" "}
+                <strong>redact</strong> (specific passages removed, shown
+                to readers as opaque highlights so the choice is honest,
+                not hidden), and <strong>update</strong> (new material
+                appended with a date &mdash; the original is preserved
+                unchanged). Stories are ledgers, not documents. We add to
+                the record; we do not silently revise it.
+              </li>
+              <li>
+                <span className="text-flame">·</span>{" "}
+                <em>Not a forum.</em> There are no comments. No DMs. No
+                public reactions beyond a single &ldquo;light the
+                lantern&rdquo; acknowledgment, which is a private
+                feedback signal to the contributor, not a leaderboard.
+                Contributors are not audience-managers, and the page
+                will never become a comment thread on their hardest
+                chapter.
+              </li>
+              <li>
+                <span className="text-flame">·</span>{" "}
+                <em>One-way letters, by design.</em> Readers may write a
+                single letter to a contributor whose story moved them,
+                only when the contributor has opted in. Every letter is
+                read by a moderator before delivery. There is no reply
+                channel. If a letter moves the contributor enough to
+                respond, they may add an update to their story &mdash;
+                never a private message back.
+              </li>
+              <li>
+                <span className="text-flame">·</span>{" "}
+                <em>LLM screening, then human review.</em> A safety
+                classifier runs in parallel through every reflection
+                session, watching for signals of active crisis
+                (suicidal ideation, imminent self-harm, active abuse,
+                severe dissociation). When triggered, the session
+                pauses, the contributor is acknowledged, and real
+                resources are offered. The same screening runs on every
+                reader letter and flags abusive content, attempts at
+                off-platform contact, medical advice, identifiable
+                third parties named without consent, and dangerous
+                treatment claims. In the early years, a human reviews
+                every story and every letter before it goes anywhere.
+                LLM tools accelerate that work; they do not replace the
+                human judgment behind it.
+              </li>
+              <li>
+                <span className="text-flame">·</span>{" "}
+                <em>Data minimalism.</em> We collect what a contributor
+                chooses to share for the story and the minimum operational
+                signals needed to run the archive. We do not sell,
+                license, or share contributor content. Contributor stories
+                are not used to train third-party models.
+              </li>
+              <li>
+                <span className="text-flame">·</span>{" "}
+                <em>Honest about what we are not.</em> Lantern Library is
+                not medical advice, not a clinical service, not a crisis
+                line, and not a substitute for professional care. We
+                publish that on every page, and we mean it.
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-sans text-xs tracking-[0.2em] uppercase text-muted mb-4">
               What it is
             </h2>
             <ul className="space-y-4">
@@ -152,100 +246,6 @@ export default function RoadmapPage() {
               We are not yet a 501(c)(3) &mdash; until that paperwork is
               filed, we describe ourselves as an independent archive.
             </p>
-          </section>
-
-          <section>
-            <h2 className="font-sans text-xs tracking-[0.2em] uppercase text-muted mb-4">
-              Care, consent, and governance
-            </h2>
-            <p className="text-foreground/70 italic mb-6">
-              The legal and ethical posture of the archive, in plain
-              language. These are commitments, not aspirations.
-            </p>
-            <ul className="space-y-5">
-              <li>
-                <span className="text-flame">·</span>{" "}
-                <em>Anonymity is the contributor&rsquo;s choice.</em> Every
-                contributor decides how they appear &mdash; full name, first
-                name and last initial, initials, a chosen pseudonym, or
-                fully anonymous. Identifying details about third parties
-                (therapists, family, employers) are stripped during
-                rendering by default and re-introduced only if the
-                contributor explicitly asks for them back.
-              </li>
-              <li>
-                <span className="text-flame">·</span>{" "}
-                <em>Nothing publishes without explicit approval.</em>{" "}
-                After a reflection, the contributor reviews both the
-                structured fields and the rendered prose. They can edit,
-                redact, adjust identity settings, decline, or approve.
-                Silence is not consent.
-              </li>
-              <li>
-                <span className="text-flame">·</span>{" "}
-                <em>Three operations on a published story:</em>{" "}
-                <strong>delete</strong> (immediate takedown, seven-day
-                grace period, no justification required),{" "}
-                <strong>redact</strong> (specific passages removed, shown
-                to readers as opaque highlights so the choice is honest,
-                not hidden), and <strong>update</strong> (new material
-                appended with a date &mdash; the original is preserved
-                unchanged). Stories are ledgers, not documents. We add to
-                the record; we do not silently revise it.
-              </li>
-              <li>
-                <span className="text-flame">·</span>{" "}
-                <em>Not a forum.</em> There are no comments. No DMs. No
-                public reactions beyond a single &ldquo;light the
-                lantern&rdquo; acknowledgment, which is a private
-                feedback signal to the contributor, not a leaderboard.
-                Contributors are not audience-managers, and the page
-                will never become a comment thread on their hardest
-                chapter.
-              </li>
-              <li>
-                <span className="text-flame">·</span>{" "}
-                <em>One-way letters, by design.</em> Readers may write a
-                single letter to a contributor whose story moved them,
-                only when the contributor has opted in. Every letter is
-                read by a moderator before delivery. There is no reply
-                channel. If a letter moves the contributor enough to
-                respond, they may add an update to their story &mdash;
-                never a private message back.
-              </li>
-              <li>
-                <span className="text-flame">·</span>{" "}
-                <em>LLM screening, then human review.</em> A safety
-                classifier runs in parallel through every reflection
-                session, watching for signals of active crisis
-                (suicidal ideation, imminent self-harm, active abuse,
-                severe dissociation). When triggered, the session
-                pauses, the contributor is acknowledged, and real
-                resources are offered. The same screening runs on every
-                reader letter and flags abusive content, attempts at
-                off-platform contact, medical advice, identifiable
-                third parties named without consent, and dangerous
-                treatment claims. In the early years, a human reviews
-                every story and every letter before it goes anywhere.
-                LLM tools accelerate that work; they do not replace the
-                human judgment behind it.
-              </li>
-              <li>
-                <span className="text-flame">·</span>{" "}
-                <em>Data minimalism.</em> We collect what a contributor
-                chooses to share for the story and the minimum operational
-                signals needed to run the archive. We do not sell,
-                license, or share contributor content. Contributor stories
-                are not used to train third-party models.
-              </li>
-              <li>
-                <span className="text-flame">·</span>{" "}
-                <em>Honest about what we are not.</em> Lantern Library is
-                not medical advice, not a clinical service, not a crisis
-                line, and not a substitute for professional care. We
-                publish that on every page, and we mean it.
-              </li>
-            </ul>
           </section>
 
           <section>

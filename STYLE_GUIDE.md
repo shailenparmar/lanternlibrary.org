@@ -4,7 +4,7 @@ This is the source of truth for design and copy decisions. Before touching
 UI, color, animation, or user-facing copy, read this file. After making a
 decision worth codifying, update this file.
 
-Last updated: 2026-04-30 (mobile voice-first reflect surface)
+Last updated: 2026-05-20 (one-way letters scaffold)
 
 ---
 
@@ -182,6 +182,41 @@ become real when the publishing pipeline is wired.
   release threshold (`RELEASE_THRESHOLD = 600` chars).
 - Auto-listen: a window-level keydown listener forwards keystrokes to the
   hidden textarea so the user never has to click to focus.
+
+### One-way letters (`/story/[slug]/letter`)
+
+Reader-to-contributor letters, per the brief: one letter, moderated, no
+reply channel. Entry-point lives on the story page as a quiet text link
+beneath "Light the lantern" (`✉ Write a letter to [first name]`), with a
+sibling caption "One letter. Moderated. No reply." that names the rules
+up front so the reader self-selects before clicking through.
+
+The letter page itself is a single column (`max-w-xl`) with:
+
+- Eyebrow + literary headline ("One letter. No reply expected.")
+- A short paragraph naming what happens (moderator reads first, no
+  reply, the contributor may add an update if it moves her)
+- Textarea (font-serif, no resize handle, 80-char minimum) and a "Sign
+  as" input with the same placeholder convention as `/reflect/preview`
+- Flame submit button labeled **"Send for moderation"** — never "Send"
+  alone. Hidden-by-design: no estimated delivery time, no recipient
+  email, no character count beyond "X more characters before you can
+  send."
+- Post-submit confirmation in place (no redirect): glowing flame dot +
+  "Letter received" eyebrow + serif headline acknowledging that the
+  letter is in moderation. Mirrors the `/reflect/released` confirmation
+  pattern but quieter — this is the reader's side, not the contributor's.
+- Footer micro-copy spells out the moderation rules (no medical advice,
+  no off-platform contact, nothing threatening) so the policy is visible
+  before submit, not surfaced only on rejection.
+
+Backend is **not wired**. Submission is a local state flip today. When
+the moderation pipeline is real, swap `setSubmitted(true)` for the POST
+and surface a server-side queued state.
+
+Opt-in per contributor (from the brief) is **not yet gated**: every
+story currently shows the link. Add an `acceptsLetters: boolean` to the
+`Story` type and conditionally render before going live.
 
 ### Buttons / CTAs
 

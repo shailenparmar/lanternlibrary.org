@@ -135,6 +135,21 @@ export default async function StoryPage({
           </span>
         </section>
 
+        <section className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link
+            href={`/story/${story.slug}/letter`}
+            className="group inline-flex items-center gap-2.5 font-sans text-sm text-foreground/80 hover:text-flame transition-colors"
+          >
+            <span aria-hidden="true" className="font-serif italic text-base">
+              ✉
+            </span>
+            <span>Write a letter to {story.contributor.split(" ")[0]}</span>
+          </Link>
+          <span className="font-sans text-xs text-muted">
+            One letter. Moderated. No reply.
+          </span>
+        </section>
+
         <section className="mt-10">
           <div className="flex flex-wrap gap-2">
             {[conditionTile, ...themeTiles].filter(Boolean).map((t) => (

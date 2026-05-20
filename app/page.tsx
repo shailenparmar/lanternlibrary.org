@@ -9,8 +9,14 @@ export default function Home() {
     <div className="relative flex flex-col flex-1 px-6 sm:px-12 py-8 sm:py-10">
       <LanternField />
 
-      <header className="relative z-10">
+      <header className="relative z-10 flex items-center justify-between">
         <Wordmark />
+        <Link
+          href="/roadmap"
+          className="font-sans text-sm tracking-[0.18em] uppercase text-muted hover:text-foreground transition-colors"
+        >
+          Roadmap
+        </Link>
       </header>
 
       <main className="relative z-10 flex flex-1 flex-col max-w-2xl mx-auto w-full pt-12 sm:pt-16 pb-8">

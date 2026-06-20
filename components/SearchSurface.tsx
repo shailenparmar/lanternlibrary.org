@@ -20,9 +20,6 @@ type StoryCard = {
 };
 
 const SAMPLE_QUERIES = [
-  "Something feels off with how I see myself",
-  "Hard to look in the mirror lately",
-  "Spending too much time checking",
   "Always measuring myself against others",
   "My mind won't slow down",
   "Mornings feel heavy",
